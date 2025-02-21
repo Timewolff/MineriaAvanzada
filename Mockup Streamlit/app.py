@@ -18,9 +18,9 @@ selected = option_menu(
     styles={  # 🎨 Personalización de estilos
         "container": {
             "padding": "0!important",
-            "background-color": "#121212",
+            "background-color": "#292929",
         },
-        "icon": {"color": "white", "font-size": "20px"},
+        "icon": {"font-size": "20px"},
         "nav-link": {
             "font-size": "16px",
             "text-align": "center",
@@ -30,11 +30,12 @@ selected = option_menu(
             "border-radius": "10px",
         },
         "nav-link-selected": {
-            "background-color": "orange",
-            "color": "white",
-            "font-weight": "bold",
-        },
-    } # 🔥 Establece el menú en horizontal
+        "background-color": "#ffa31a",
+        "color": "#000000",
+        "font-weight": "bold",
+        "icon": {"color": "#000000"},
+    },
+    }
 )
 
 if selected == "Home":
