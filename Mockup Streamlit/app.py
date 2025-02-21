@@ -41,6 +41,34 @@ selected = option_menu(
 if selected == "Home":
     home.show()
 elif selected == "EDA":
-    eda.show()
+    from eda import EDA  # Importamos la clase EDA
+
+    st.title("Exploración de Datos - EDA")
+
+    # Crear una instancia de la clase EDA con el dataset
+    eda_instance = EDA('test-data.csv')
+
+    st.subheader("Primeras Filas del Dataset")
+    st.write(eda_instance.head_df())
+
+    st.subheader("Tipos de Datos")
+    st.write(eda_instance.check_data_types())
+
+    st.subheader("Valores Atípicos")
+    st.write(eda_instance.detect_outliers())
+
+    # Gráficos en Streamlit
+    st.subheader("Histogramas")
+    columna = st.selectbox("Selecciona una columna para visualizar el histograma", eda_instance.get_df().columns)
+    eda_instance.plot_histogram(columna)
+
+    st.subheader("Gráficos de Dispersión")
+    col1 = st.selectbox("Selecciona la primera variable", eda_instance.get_df().columns)
+    col2 = st.selectbox("Selecciona la segunda variable", eda_instance.get_df().columns)
+    eda_instance.plot_scatter(col1, col2)
+
+    st.subheader("Mapa de Calor")
+    eda_instance.plot_heatmap()
+
 elif selected == "Results":
     results.show()
