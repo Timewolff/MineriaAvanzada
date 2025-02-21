@@ -21,9 +21,9 @@ def show():
             )
 
         # Model Basic Information
-        st.markdown("<br>" * 3, unsafe_allow_html=True)  # Ajusta el número para centrar mejor
+        st.markdown("<br>" * 3, unsafe_allow_html=True)
 
-        # Contenedor con columnas centradas
+        # Container of vertical metrics
         with st.container():
             subcol1, subcol2 = st.columns([1, 1])
 
@@ -33,7 +33,6 @@ def show():
             with subcol2:
                 styled_metric("Best model", "XGBoost Regressor")
 
-        # Segunda fila con métricas alineadas mejor
         with st.container():
             col1, col2, col3 = st.columns([1, 1, 1])
 
