@@ -8,10 +8,10 @@ def show():
         st.header('Integrantes del grupo:')
         st.markdown("""
         - Esteban Ramirez Montano
-        - Kristel Porras Mata
+        - Kristhel Porras Mata
         - Deykel Bernald
-        - Marla Gomez
-        - Karolina No me acuerdo
+        - Marla Gomez H
+        - Carolina Salas
         """)
         st.write("¡El mejor equipo!")
 
