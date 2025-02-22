@@ -7,36 +7,23 @@ import home
 import eda
 import results
 
-# Main menu
-selected = option_menu(
-    menu_title=None,
-    options=["Home", "EDA", "Results"],
-    icons=["house", "bar-chart", "rocket-takeoff"],  # Bootstrap Icons
-    menu_icon="cast",
-    default_index=0,
-    orientation="horizontal",
-    styles={  # Personalización de estilos
-        "container": {
-            "padding": "0!important",
-            "background-color": "#F8D000",
-        },
-        "icon": {"font-size": "20px"},
-        "nav-link": {
-            "font-size": "16px",
-            "text-align": "center",
-            "margin": "0px",
-            "padding": "10px 10px",
-            "color": "#fff",
-            "border-radius": "10px",
-        },
-        "nav-link-selected": {
-            "background-color": "#ffa31a",
-            "color": "#000000",
-            "font-weight": "bold",
-            "icon": {"color": "#000000"},
-        },
-    },
-)
+main_color = "#384B70"
+
+# Main App
+with st.sidebar:
+    selected = option_menu(
+        menu_title="Welcome!",
+        options=["Home", "EDA", "Results"],
+        icons=["house", "bar-chart", "rocket-takeoff"],  # Bootstrap Icons
+        menu_icon="cast",
+        default_index=0,
+        styles={
+            "container": {"background-color": "#f8f9fa"},
+            "icon": {"font-size": "18px"}, 
+            "nav-link": {"font-size": "16px", "text-align": "left", "margin": "0px", "--hover-color": "#d9d9d9"},
+            "nav-link-selected": {"background-color": main_color, "color": "white", "icon": {"color": "white"} },
+        }
+    )
 
 if selected == "Home":
     home.show()
