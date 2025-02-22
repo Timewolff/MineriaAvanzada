@@ -5,14 +5,22 @@ import seaborn as sns
 import streamlit as st
 
 class EDA:
-    def __init__(self, file=None):
+    def __init__(self, file=None, delimiter=None):
         """
         Inicializa la clase EDA y carga datos desde un archivo CSV si se proporciona.
 
         Parámetros:
             file (str): Ruta al archivo CSV. Si no se proporciona, se inicializa un DataFrame vacío.
         """
-        self.__df = pd.read_csv(file) if file else pd.DataFrame()
+        #self.__df = pd.read_csv(file) if file else pd.DataFrame()
+        if delimiter:
+            self.__df = pd.read_csv(file, delimiter=delimiter)
+        else:
+            self.__df = pd.read_csv(file) if file else pd.DataFrame()
+
+    def missing_values_info(self):
+        """Muestra el número de valores nulos por columna."""
+        return self.__df.isnull().sum() if not self._df.empty else "No se cargaron los datos :("
 
     def head_df(self, n=5):
         """Muestra las primeras `n` filas del DataFrame."""
@@ -80,10 +88,57 @@ class EDA:
         plt.title("Correlation Heatmap", fontsize=18)
         st.pyplot(plt)
 
+    def plot_bar(self, col):
+        """Genera un gráfico de barras para una columna seleccionada."""
+        plt.figure(figsize=(10, 6))
+        sns.countplot(x=self.__df[col])
+        plt.title(f'Gráfico de Barras: {col}')
+        plt.xlabel(col)
+        plt.ylabel('Frecuencia')
+        st.pyplot(plt)
+
+    def plot_violin(self, col):
+        """Genera un gráfico de violín para una columna seleccionada."""
+        plt.figure(figsize=(10, 6))
+        sns.violinplot(x=self.__df[col])
+        plt.title(f'Gráfico de Violín: {col}')
+        plt.xlabel(col)
+        st.pyplot(plt)
+
+    def plot_line(self, col):
+        """Genera un gráfico de líneas para una columna seleccionada."""
+        plt.figure(figsize=(10, 6))
+        sns.lineplot(data=self.__df, x=self.__df.index, y=self.__df[col])
+        plt.title(f'Gráfico de Líneas: {col}')
+        plt.xlabel('Índice')
+        plt.ylabel(col)
+        st.pyplot(plt)
+
+
+    def plot_pairplot(self):
+        """Genera un pairplot de las columnas numéricas."""
+        num_df = self.__df.select_dtypes(include=['float64', 'int64'])
+        if num_df.empty:
+            return "No hay columnas numéricas para generar el pairplot."
+
+        plt.figure(figsize=(12, 10))
+        sns.pairplot(num_df)
+        plt.title("Pairplot de Variables Numéricas")
+        st.pyplot(plt)
+
+    def plot_boxplot(self, col):
+        """Genera un boxplot para una columna seleccionada."""
+        plt.figure(figsize=(10, 6))
+        sns.boxplot(x=self.__df[col])
+        plt.title(f'Boxplot de {col}')
+        plt.xlabel(col)
+        st.pyplot(plt)
+
     def __str__(self):
         return f"Clase EDA - DataFrame de la forma: {self.__df.shape}"
 
     def get_df(self):
         """Devuelve una copia del DataFrame para análisis posteriores."""
         return self.__df.copy()
+
 
