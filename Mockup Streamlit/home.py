@@ -9,7 +9,7 @@ def show():
         st.markdown("""
         - Esteban Ramirez Montano
         - Kristhel Porras Mata
-        - Deykel Bernald
+        - Deykel Bernard Salazar
         - Marla Gomez H
         - Carolina Salas
         """)
