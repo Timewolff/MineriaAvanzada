@@ -1,18 +1,18 @@
 # 🚗 Vehicle Valuation Enhancement: Improving Car Price Predictions 
 
-Este proyecto busca mejorar la precisión de la predicción de precios de autos usados mediante modelos de regresión. Se utilizan diversas técnicas de análisis exploratorio de datos (EDA) y Machine Learning para desarrollar un modelo eficiente basado en datos.
+This project aims to improve the accuracy of used car price predictions using regression models. Various exploratory data analysis (EDA) techniques and Machine Learning methods are applied to develop an efficient data-driven model.
 
 📊 Dataset
 
-- Fuente: Kaggle - Used Cars Price Prediction
-- Archivo: train-data.csv
-- Características Clave:
-  
-  - Año del modelo
-  - Precio original
-  - Kilometraje
-  - Tipo de combustible
-  - Tipo de vendedor
-  - Transmisión
-  - Número de dueños previos
-  - Precio de venta (Variable objetivo)
+- Source: Kaggle - Used Cars Price Prediction
+- File: train-data.csv
+- Key Features:
+  - Model Year
+  - Original Price
+  - Mileage
+  - Fuel Type
+  - Seller Type
+  - Transmission
+  - Number of Previous Owners
+  - Selling Price (Target Variable)
+ 
