@@ -5,7 +5,7 @@ def show():
     col1, col2 = st.columns([1.2, 1])  # 50% - 50%
 
     with col1:
-        st.header('Integrantes del grupo:')
+        st.header('👥 Integrantes del grupo:')
         st.markdown("""
         - Esteban Ramirez Montano
         - Kristhel Porras Mata
