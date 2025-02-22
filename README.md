@@ -7,7 +7,7 @@ Este proyecto busca mejorar la precisión de la predicción de precios de autos 
 - Fuente: Kaggle - Used Cars Price Prediction
 - Archivo: train-data.csv
 - Características Clave:
-- 
+  
   - Año del modelo
   - Precio original
   - Kilometraje
