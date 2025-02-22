@@ -13,7 +13,7 @@ def show():
         - Marla Gomez H
         - Carolina Salas
         """)
-        st.write("¡El mejor equipo!")
+        st.write("¡El mejor equipo! 💪🔥")
 
     with col2:
         st.image("Recursos/homero_pensando.jpg")
