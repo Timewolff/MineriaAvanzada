@@ -28,7 +28,7 @@ with st.sidebar:
 if selected == "Home":
     home.show()
 elif selected == "EDA":
-    from eda import EDA  # Importamos la clase EDA
+    from eda import EDA
 
     st.title("Exploración de Datos - EDA")
 
