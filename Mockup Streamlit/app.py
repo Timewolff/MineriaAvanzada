@@ -3,7 +3,7 @@ import streamlit_antd_components as sac
 from streamlit_option_menu import option_menu
 
 # Import other modules
-import home
+import about
 import eda
 import results
 
@@ -13,8 +13,8 @@ main_color = "#384B70"
 with st.sidebar:
     selected = option_menu(
         menu_title="Welcome!",
-        options=["Home", "EDA", "Results"],
-        icons=["house", "bar-chart", "rocket-takeoff"],  # Bootstrap Icons
+        options=["EDA", "Results","About"],
+        icons=["bar-chart", "rocket-takeoff","bi bi-mortarboard"],  # Bootstrap Icons
         menu_icon="cast",
         default_index=0,
         styles={
@@ -25,8 +25,8 @@ with st.sidebar:
         }
     )
 
-if selected == "Home":
-    home.show()
+if selected == "About":
+    about.show()
 elif selected == "EDA":
     from eda import EDA
 
