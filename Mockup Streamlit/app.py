@@ -12,11 +12,11 @@ main_color = "#384B70"
 # Main App
 with st.sidebar:
     selected = option_menu(
-        menu_title="Welcome!",
-        options=["EDA", "Results","About"],
-        icons=["bar-chart", "rocket-takeoff","bi bi-mortarboard"],  # Bootstrap Icons
+        menu_title="Menú Principal",
+        options=["Home", "EDA", "Results", "About"],  # Se agrega Home
+        icons=["house", "bar-chart", "rocket-takeoff", "bi bi-mortarboard"],  # Icono para Home
         menu_icon="cast",
-        default_index=0,
+        default_index=0,  # Home será la primera opción
         styles={
             "container": {"background-color": "#f8f9fa"},
             "icon": {"font-size": "18px"}, 
@@ -25,8 +25,28 @@ with st.sidebar:
         }
     )
 
-if selected == "About":
-    about.show()
+# -------------------------
+# ESTA ES UNA CORRECCION DEL PROFE -Seccion Home
+# -------------------------
+if selected == "Home":
+    st.title("Bienvenido a Mockup Paquete de Python")
+
+    # Versión del Proyecto
+    st.subheader(" Versión del Proyecto")
+    st.markdown("""
+    - **Versión 1.0**
+    - Última actualización: Febrero 2025
+    """)
+    
+      # Mejoras Futuras
+    st.subheader("Mejoras Futuras")
+    st.markdown("""
+    ✅ Optimización de modelos de predicción.  
+    ✅ Mejora en la interfaz de usuario para mayor interactividad.  
+    ✅ Agregar más tipos de gráficos para análisis exploratorio.  
+    ✅ Implementación de animaciones con Vizzu *(en progreso)*.  
+    """)
+
 elif selected == "EDA":
     from eda import EDA
 
@@ -86,5 +106,8 @@ elif selected == "EDA":
 
 elif selected == "Results":
     results.show()
+    
+elif selected == "About":
+    about.show()
 
 
