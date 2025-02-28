@@ -93,7 +93,9 @@ elif selected == "EDA":
         eda_instance.plot_bar(col)
 
     with st.expander("Diagrama de Violin"):
-        eda_instance.plot_violin()
+        col_violin = st.selectbox("Selecciona una columna para el diagrama de violín", eda_instance.get_df().columns)
+        eda_instance.plot_violin(col_violin)
+
 
     with st.expander("Gráfico Lineal"):
         eda_instance.plot_line()
