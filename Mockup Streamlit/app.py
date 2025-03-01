@@ -33,13 +33,6 @@ if selected == "EDA":
     # Crear una instancia de la clase EDA con el dataset
     eda_instance = EDA('test-data.csv')
 
-    # Tabla de contenido
-    st.subheader("Contenido")
-    st.write("1. Primeras Filas del Dataset")
-    st.write("2. Tipos de Datos")
-    st.write("3. Valores Atípicos")
-    st.write("4. Gráficos")
-
     # Primeras Filas del Dataset
     st.subheader("Primeras Filas del Dataset")
     st.write(eda_instance.head_df())
