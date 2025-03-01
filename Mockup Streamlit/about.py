@@ -5,26 +5,35 @@ def display_section(header, content):
     st.markdown(content)
 
 def show():
-    st.markdown('<h1 style="color:#384B70;">Mockup Paquete de Python</h1>', unsafe_allow_html=True)
-    
-    # Descripción del proyecto
-    st.header("Descripción del Proyecto:")
+    st.markdown('<h1 style="color:#384B70;">Python ModelBoard Project</h1>', unsafe_allow_html=True)
     st.markdown("""
-    Proyecto que utiliza regresión y *machine learning* para predecir el precio de autos usados según sus características.
+    Using Machine Learning models, ModelBoard allows you to evaluate various prediction and classification algorithms and choose the best model for your project.
+    """)
+    st.markdown("""
+    - **ModelBoard Version 1.1**
+    - Last update: March 2025
     """)
     
-    # Descripción del dataset
+    st.subheader("Future Improvements")
+    st.markdown("""
+    ✅ Optimization of predictive models.  
+    ✅ Improved user interface for greater interactivity.  
+    ✅ Add more types of charts for exploratory analysis.  
+    ✅ Implementation of animations with Vizzu *(in progress)*.  
+    """)
+    
+    # Dataset description
     display_section(
         "Dataset: Used Cars Price Prediction",
         """
-        Dataset para predecir el precio de autos usados, basado en características como marca, año y kilometraje. 
-        Obtén más detalles en Kaggle: [Used Cars Price Prediction](https://www.kaggle.com/datasets/avikasliwal/used-cars-price-prediction?select=train-data.csv)
+        Dataset for predicting the price of used cars, based on features such as brand, year, and mileage. 
+        Get more details on Kaggle: [Used Cars Price Prediction](https://www.kaggle.com/datasets/avikasliwal/used-cars-price-prediction?select=train-data.csv)
         """
     )
     
-    # Integrantes del grupo
+    # Group members
     display_section(
-        'Integrantes del grupo:',
+        'Group Members:',
         """
         - Carolina Salas Moreno 
         - Deykel Bernard Salazar
@@ -33,4 +42,4 @@ def show():
         - Marla Gomez Hernández
         """
     )
-    st.write("¡El mejor equipo! 💪🔥")
+    st.write("The best team! 💪🔥")
