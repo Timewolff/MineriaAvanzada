@@ -4,7 +4,7 @@ from streamlit_option_menu import option_menu
 
 # Import other modules
 import about
-import eda
+from eda import EDAApp
 import results
 
 main_color = "#384B70"
@@ -26,56 +26,7 @@ with st.sidebar:
     )
   
 if selected == "EDA":
-    from eda import EDA
-
-    st.title("Exploración de Datos - EDA")
-
-    # Crear una instancia de la clase EDA con el dataset
-    eda_instance = EDA('test-data.csv')
-
-    # Primeras Filas del Dataset
-    st.subheader("Primeras Filas del Dataset")
-    st.write(eda_instance.head_df())
-
-    # Tipos de Datos
-    st.subheader("Tipos de Datos")
-    st.write(eda_instance.check_data_types())
-
-    # Valores Atípicos
-    st.subheader("Valores Atípicos")
-    st.write(eda_instance.detect_outliers())
-
-    # Gráficos en Streamlit
-    st.subheader("Gráficos")
-    with st.expander("Histogramas"):
-        columna = st.selectbox("Selecciona una columna para visualizar el histograma", eda_instance.get_df().columns)
-        eda_instance.plot_histogram(columna)
-
-    with st.expander("Gráficos de Dispersión"):
-        col1 = st.selectbox("Selecciona la primera variable", eda_instance.get_df().columns)
-        col2 = st.selectbox("Selecciona la segunda variable", eda_instance.get_df().columns)
-        eda_instance.plot_scatter(col1, col2)
-
-    with st.expander("Mapa de Calor"):
-        eda_instance.plot_heatmap()
-
-    with st.expander("Gráfico de Barras"):
-        col = st.selectbox("Selecciona una columna para el gráfico de barras", eda_instance.get_df().columns)
-        eda_instance.plot_bar(col)
-
-    with st.expander("Diagrama de Violin"):
-        col_violin = st.selectbox("Selecciona una columna para el diagrama de violín", eda_instance.get_df().columns)
-        eda_instance.plot_violin(col_violin)
-
-
-    with st.expander("Gráfico Lineal"):
-        eda_instance.plot_line()
-
-    with st.expander("Gráfico por Pares"):
-        eda_instance.plot_pairplot()
-
-    with st.expander("Diagrama de Caja"):
-        eda_instance.plot_boxplot()
+    EDAApp.show()
 
 elif selected == "Results":
     results.show()
