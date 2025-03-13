@@ -1,7 +1,7 @@
 # ModelBoard: An Interactive Data Exploration and Machine Learning Tool
 
 ---
-## What is ModelBoard?
+## 🚗 What is ModelBoard? 
 
 ModelBoard is an easy-to-use web application designed to help users explore datasets and analyze machine learning models without requiring deep technical expertise. It provides intuitive visualizations and metrics to compare different models, making data-driven decision-making more accessible.
 
@@ -46,14 +46,20 @@ pip install -r requirements.txt
 streamlit run app.py
 ---
 ## **Project Structure**
-
-ModelBoard/
-│── app.py        # Main Streamlit application
-│── eda.py        # Data Exploration module
-│── results.py    # Model Evaluation and visualization
-│── about.py      # Project Information and Contributors
-│── requirements.txt  # Dependencies
----
+```
+📂 ModelBoard/              # Main project folder
+│── 📂 modules/             # Core application modules
+│   ├── eda.py             # Exploratory Data Analysis module
+│   ├── results.py         # Model Evaluation and visualization
+│   ├── about.py           # Project Information and Contributors
+│── 📂 data/               # Dataset storage
+│   ├── sample_data.csv    # Example dataset
+│── 📂 config/             # Configuration settings
+│   ├── config.json        # Model parameters and settings
+│── 📄 app.py              # Main Streamlit application
+│── 📄 requirements.txt    # Dependencies
+│── 📄 README.md           # Documentation
+```
 ## **Technologies Used**
 
 Python 3.8+
