@@ -4,8 +4,8 @@
 ## 🚗 What is ModelBoard? 
 
 ModelBoard is an easy-to-use web application designed to help users explore datasets and analyze machine learning models without requiring deep technical expertise. It provides intuitive visualizations and metrics to compare different models, making data-driven decision-making more accessible.
-
 ---
+
 ## Why Use ModelBoard?
 
 📊 Easy Data Exploration: Gain insights from your data with just a few clicks.
@@ -38,6 +38,7 @@ Data Visualization: Generate interactive plots, correlation heatmaps, and predic
 
 Simple UI: A user-friendly interface powered by Streamlit.
 ---
+
 ## Installation
 
 To run ModelBoard on your local machine:
@@ -60,6 +61,7 @@ streamlit run app.py
 │── 📄 requirements.txt    # Dependencies
 │── 📄 README.md           # Documentation
 ```
+
 ## **Technologies Used**
 
 Python 3.8+
