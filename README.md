@@ -38,11 +38,10 @@ Data Visualization: Generate interactive plots, correlation heatmaps, and predic
 Simple UI: A user-friendly interface powered by Streamlit.
 ---
 
-## Installation
-
-To run ModelBoard on your local machine:
-pip install -r requirements.txt
-streamlit run app.py
+## Requirements
+**Step 1:** Please install Microsoft C++ Build Tools in your machine. 
+**Step 2:** Install Python 3.11.7
+**Step 3:** Run the following code if this is your first time running it `pip freeze > requirements.txt`
 
 ---
 ## **Project Structure**
