@@ -1,5 +1,6 @@
 import pandas as pd
 import numpy as np
+from xgboost import XGBRegressor
 from sklearn.neighbors import KNeighborsRegressor
 from sklearn_genetic import GASearchCV
 from sklearn_genetic.space import Integer, Categorical, Continuous
@@ -8,7 +9,7 @@ from sklearn.tree import DecisionTreeRegressor
 from sklearn.preprocessing import StandardScaler
 from sklearn.metrics import r2_score, mean_squared_error
 from sklearn.linear_model import LinearRegression, Ridge, Lasso
-from xgboost import XGBRegressor
+
 from sklearn.preprocessing import MinMaxScaler
 from sklearn.feature_selection import SelectKBest,f_regression
 from sklearn.feature_selection import SelectFromModel 
