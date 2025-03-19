@@ -41,7 +41,7 @@ Simple UI: A user-friendly interface powered by Streamlit.
 ## Requirements
 **Step 1:** Please install Microsoft C++ Build Tools in your machine. 
 **Step 2:** Install Python 3.11.7
-**Step 3:** Run the following code if this is your first time running it `pip freeze > requirements.txt`
+**Step 3:** Run the following code if this is your first time running it `pip install -r requirements.txt`
 
 ---
 ## **Project Structure**
