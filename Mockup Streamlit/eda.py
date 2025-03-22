@@ -145,7 +145,7 @@ class EDAApp:
     @staticmethod
     def show():
         st.title("Exploración de Datos - EDA")
-        eda_instance = EDA('test-data.csv')
+        eda_instance = EDA('dataset.csv')
         
         st.markdown("""
             <style>
