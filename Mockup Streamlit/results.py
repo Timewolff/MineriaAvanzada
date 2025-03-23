@@ -6,7 +6,6 @@ import seaborn as sns
 import matplotlib.pyplot as plt
 import streamlit as st
 import pandas as pd
-import vizzu_helper  
 
 
 def show():
@@ -181,9 +180,5 @@ def show():
 
     # Selección del tipo de gráfico
     chart_type = st.selectbox("Selecciona el tipo de gráfico", ["bar", "line"])
-
-    # Mostrar el gráfico interactivo con Vizzu
-    if x_column and y_column and chart_type:
-        vizzu_helper.create_vizzu_chart(data, x_column, y_column, chart_type)
 
 show()
