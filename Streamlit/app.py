@@ -32,7 +32,10 @@ if selected == "Start Analysis":
 elif selected == "EDA":
     EDAApp.show()
 elif selected == "Results":
-    results.show_supervised()
+    if st.session_state.get("problem_type") == "forecast":
+        results.show_forecast()
+    else:
+        results.show_supervised()
     #unsupervised_results = unsupervised_model.get_results()
     #results.show_unsupervised(unsupervised_results)
 elif selected == "About":
