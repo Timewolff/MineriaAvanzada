@@ -27,7 +27,7 @@ with st.sidebar:
         }
     )
   
-if selected == "Star Analysis":
+if selected == "Start Analysis":
     start.show()
 elif selected == "EDA":
     EDAApp.show()

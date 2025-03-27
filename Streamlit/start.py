@@ -1,7 +1,7 @@
 import streamlit as st
 import os
 import model
-import supervised_results
+import results as results
 import pandas as pd
 
 def show():
@@ -64,19 +64,19 @@ def show():
         return
     
     # Slider to get the percentage of the training set
-    train_size_percent = st.slider("Size of your training set (%)", 50, 90, 80)
+    train_size_percent = st.slider("Size of training set (%)", 50, 90, 80)
     test_size = 1 - (train_size_percent / 100)
     
     # Button to run the model
     if st.button("Run Model", type="primary"):
         try:
-            # 1. Cargar el archivo CSV con EDA
+            # Load csv file
             eda = model.EDA(file=dataset_path)
             
-            # 2. Pasar el EDA al optimizador
+            # Call the data optimization class
             optimizador = model.DataOptimization(eda)
             
-            # 3. Ejecutar optimización y obtener los mejores parámetros
+            # Get the best parameters
             best_params = optimizador.opti_director(
                 target_column=target_column,
                 problem_type=problem_type,
@@ -84,13 +84,13 @@ def show():
                 test_size=test_size
             )
             
-            # 4. Crear la instancia del modelo supervisado pasando los mejores parámetros
+            # Creation of the supervised model
             modelo_supervisado = model.Supervisado(optimizador, best_params=best_params)
             
-            # 5. Ejecutar los modelos y comparar variantes
+            # Compare the results of the models
             resultados = modelo_supervisado.model_director(compare_params=True)
             
-            # 6. Mostrar los resultados en la segunda página
+            # Results
             st.session_state['eda'] = eda
             st.session_state['optimizador'] = optimizador
             st.session_state['best_params'] = best_params
@@ -98,9 +98,12 @@ def show():
             st.session_state['resultados'] = resultados
             st.session_state['problem_type'] = problem_type
             
-            # 7. Cambiar a la página de resultados
-            st.success("Modelo ejecutado con éxito. Presiona 'Results' en el menú para ver los resultados.")
+            # Message of success 
+            st.success("Model executed successfully. Press 'Results' in the menu to see the results.")
             
         except Exception as e:
-            st.error(f"Error al ejecutar el modelo: {str(e)}")
+            st.error(f"Error in model execution: {str(e)}")
             st.exception(e)
+
+if __name__ == "__main__":
+    show()

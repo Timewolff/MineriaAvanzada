@@ -145,7 +145,14 @@ class EDAApp:
     @staticmethod
     def show():
         st.title("Exploración de Datos - EDA")
-        eda_instance = EDA('dataset.csv')
+        
+        # Check if the EDA instance is available in session state
+        if 'eda' not in st.session_state:
+            st.warning("No data available. Please upload and process your dataset first from the 'Start Analysis' page.")
+            return
+        
+        # Use the EDA instance from session state
+        eda_instance = st.session_state['eda']
         
         st.markdown("""
             <style>
@@ -176,7 +183,7 @@ class EDAApp:
             st.write(eda_instance.head_df())
         with tab2:
             st.subheader("Last 5 rows of the Dataset")
-            st.write(eda_instance.head_df())
+            st.write(eda_instance.tail_df())  # Fixed to use tail_df instead of head_df
         with tab3:
             st.subheader("Data types ")
             st.write(eda_instance.check_data_types())
@@ -187,9 +194,13 @@ class EDAApp:
             st.subheader("Detected Outliers")
             # Convert dictionary to DataFrame for a structured table format
             outliers_dict = eda_instance.detect_outliers() 
-            df_outliers = pd.DataFrame(outliers_dict.items(), columns=["Feature", "Outlier Count"])
-            # Display a table with the outliers
-            st.table(df_outliers)
+            if isinstance(outliers_dict, dict):
+                df_outliers = pd.DataFrame(outliers_dict.items(), columns=["Feature", "Outlier Count"])
+                # Display a table with the outliers
+                st.table(df_outliers)
+            else:
+                st.write(outliers_dict)  # Display message if not a dictionary
+                
         with col2:
             columna = st.selectbox("Selects a column to display the histogram", eda_instance.get_df().columns)
             eda_instance.plot_histogram(columna)
@@ -202,7 +213,7 @@ class EDAApp:
             selected_vars = st.multiselect(
                 "Select two variables", 
                 eda_instance.get_df().columns, 
-                default=eda_instance.get_df().columns[:2],  # Pre-select first two columns
+                default=eda_instance.get_df().columns[:2].tolist() if len(eda_instance.get_df().columns) >= 2 else [],  # Pre-select first two columns
                 max_selections=2  # Limit selection to 2 variables
             )
 
