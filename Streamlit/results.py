@@ -4,22 +4,19 @@ import numpy as np
 import matplotlib.pyplot as plt
 import seaborn as sns
 from eda import EDA
-from model import TimeSeriesModel
+from model.time_series import TimeSeriesModel
 
 def show_supervised():
     st.title("Resultados del Modelo Supervisado")
     
-    # Verificar si ya se han ejecutado los modelos
     if 'resultados' not in st.session_state:
         st.warning("No hay resultados disponibles. Por favor ejecuta el modelo primero desde la página 'EDA'.")
         return
     
-    # Obtener los datos de la sesión
     resultados = st.session_state['resultados']
     modelo_supervisado = st.session_state['modelo_supervisado']
     problem_type = st.session_state['problem_type']
     
-    # Generar y mostrar la visualización comparativa usando matplotlib
     st.header("Visualización Detallada de Modelos")
     if problem_type == 'classification':
         fig, ax = modelo_supervisado.visualizar_comparacion_modelos(metrica='roc_auc', figsize=(10, 6))
@@ -28,11 +25,9 @@ def show_supervised():
     
     st.pyplot(fig)
     
-    # Mostrar una explicación de los resultados
     st.header("Interpretación de Resultados")
     
     if problem_type == 'classification':
-        # Encontrar el mejor modelo basado en ROC AUC o accuracy
         if any(res.get('roc_auc') is not None for res in resultados):
             mejor_modelo = max([res for res in resultados if res.get('roc_auc') is not None], 
                               key=lambda x: x['roc_auc'])
@@ -43,7 +38,6 @@ def show_supervised():
             metrica_principal = 'accuracy'
             valor_metrica = mejor_modelo['accuracy']
     else:
-        # Para regresión, el mejor modelo es el que tiene menor RMSE
         mejor_modelo = min(resultados, key=lambda x: x['RMSE'])
         metrica_principal = 'RMSE'
         valor_metrica = mejor_modelo['RMSE']
@@ -58,7 +52,6 @@ def show_supervised():
     elif '(Exhaustive)' in mejor_modelo['modelo']:
         st.write("Este modelo fue optimizado usando búsqueda exhaustiva de parámetros.")
     
-    # Mostrar todos los parámetros del modelo
     st.subheader("Parámetros optimizados")
     
     if 'best_params' in st.session_state:
@@ -83,47 +76,25 @@ def show_supervised():
                         st.write(f"- {param_name}: {value}")
             else:
                 st.write("No se utilizó el método exhaustivo.")
-    
+
 def show_forecast():
-    st.title("Model Results")
+    st.header("Forecast Results")
 
-    # Load the cleaned dataset from EDA
-    eda = EDA()
-    data = eda.get_df()
+    df = st.session_state.get("forecast_df")
+    date_col = st.session_state.get("date_col")
+    value_col = st.session_state.get("value_col")
 
-    if data is not None:
-        st.subheader("📈 Time Series Forecasting")
+    if df is None or date_col is None or value_col is None:
+        st.error("Missing forecast data.")
+        return
 
-        # Let user select columns for date and values
-        date_col = st.selectbox("Select date column", data.columns)
-        value_col = st.selectbox("Select value column", data.columns)
+    model_type = st.selectbox("Choose time series model", ["prophet", "xgboost"])
+    steps = st.slider("Number of days to forecast", 1, 30, 7)
 
-        try:
-            # Prepare the time series from selected columns
-            ts_data = data[[date_col, value_col]].dropna()
-            ts_data[date_col] = pd.to_datetime(ts_data[date_col])
-            ts_data = ts_data.sort_values(by=date_col)
-            ts_data.set_index(date_col, inplace=True)
-            series = ts_data[value_col]
+    if st.button("Run Forecast"):
+        ts_model = TimeSeriesModel(df, date_col, value_col, model_type)
+        ts_model.train()
+        forecast = ts_model.forecast(steps)
 
-            # Select model type and steps to forecast
-            model_type = st.radio("Choose forecasting model", ["prophet", "xgboost"], horizontal=True)
-            steps = st.slider("Forecast steps", 1, 30, 7)
-
-            # Train and forecast
-            model = TimeSeriesModel(ts_data.reset_index(), date_col, value_col, model_type)
-            model.train()
-            forecast = model.forecast(steps)
-
-            # Plot results
-            fig, ax = plt.subplots(figsize=(10, 4))
-            series.plot(ax=ax, label="Historical")
-            forecast.plot(ax=ax, label="Forecast", linestyle="--", marker="o")
-            ax.set_title(f"Forecast ({steps} steps) - Model: {model_type}")
-            ax.legend()
-            st.pyplot(fig)
-
-        except Exception as e:
-            st.warning(f"Time series processing error: {e}")
-    else:
-        st.warning("No valid data found from EDA.")
+        st.line_chart(forecast)
+        st.success("Forecast completed.")
