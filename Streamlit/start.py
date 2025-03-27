@@ -37,7 +37,7 @@ def show():
     with col1:
         problem_type = st.selectbox(
             "Problem type",
-            ["classification", "regression"],
+            ["classification", "regression", "forecast"], 
             index=0
         )
         
@@ -70,7 +70,16 @@ def show():
     # Button to run the model
     if st.button("Run Model", type="primary"):
         try:
-            # Load csv file
+            if problem_type == "forecast":
+                # Guardamos info necesaria para el forecast
+                st.session_state['forecast_df'] = temp_df
+                st.session_state['date_col'] = columns[0]  # puedes cambiar esto si necesitas una selección más específica
+                st.session_state['value_col'] = target_column
+                st.session_state['problem_type'] = problem_type
+                st.success("Forecast model ready to run. Go to 'Results' to see forecast.")
+                return
+
+            # Carga de archivo y ejecución normal para clasificación o regresión
             eda = model.EDA(file=dataset_path)
             
             # Call the data optimization class
@@ -90,7 +99,7 @@ def show():
             # Compare the results of the models
             resultados = modelo_supervisado.model_director(compare_params=True)
             
-            # Results
+            # Store results
             st.session_state['eda'] = eda
             st.session_state['optimizador'] = optimizador
             st.session_state['best_params'] = best_params
