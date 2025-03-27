@@ -62,6 +62,9 @@ from sklearn.tree import DecisionTreeClassifier
 from sklearn.neighbors import KNeighborsClassifier
 from sklearn.ensemble import RandomForestClassifier, AdaBoostClassifier, RandomForestRegressor
 
+# Forecasting Models
+from prophet import Prophet
+
 # Additional Tools
 from sklearn.pipeline import make_pipeline
 from sklearn.model_selection import train_test_split
@@ -328,40 +331,36 @@ class DataOptimization(EDA):
 
 #------------------------Data Split Components--------------------------------------------------------------
 
-    def split_df(self, target_column, test_size=None, random_state=42):
+    def split_df(self, target_column, test_size=0.2, random_state=42):
         """
         Splits the dataframe into training and test sets.
 
         Parameters:
         - target_column: str -> Name of the target column (y).
-        - test_size: float -> Proportion of the test set (if not provided, it is calculated from the entered percentage).
+        - test_size: float -> Proportion of the test set (default 0.2, which means 80% for training).
         - random_state: int -> Seed for randomization.
 
         Returns:
         - X_train, X_test, y_train, y_test: Split and preprocessed datasets.
         """
-        while True:
-            try:
-                percent = float(input("Enter the percentage for the training set: (Example: 80) \n"))
-                if 0 < percent < 100:
-                    train_size = percent / 100
-                    break # Exit the loop
-                else:
-                    print("The percentage must be between 1 and 99.")
-            except ValueError:
-                print("Invalid number. Try again.")
-
-        while True:
-            try:
-                # Separate features (X) and target variable (y)
-                X = self.__df.drop(columns=[target_column])
-                y = self.__df[target_column]
-                break  # Exit the loop if there are no errors
-            except KeyError:
-                print(f"The column '{target_column}' does not exist. Try again.")
-                print("Available columns:")
-                print(self.check_data_types())
-                target_column = input("Enter the correct name of the target column: ")
+        # Validar que test_size esté en el rango correcto
+        if not 0 < test_size < 1:
+            print(f"Warning: test_size={test_size} is not in range (0,1). Using default value 0.2")
+            test_size = 0.2
+        
+        train_size = 1 - test_size
+        
+        try:
+            # Separate features (X) and target variable (y)
+            X = self.__df.drop(columns=[target_column])
+            y = self.__df[target_column]
+        except KeyError:
+            print(f"The column '{target_column}' does not exist. Try again.")
+            print("Available columns:")
+            print(self.check_data_types())
+            target_column = input("Enter the correct name of the target column: ")
+            X = self.__df.drop(columns=[target_column])
+            y = self.__df[target_column]
 
         # Preprocess features (X), convert categorical variables to One-Hot Encoding
         X = pd.get_dummies(X, drop_first=True)
@@ -374,10 +373,10 @@ class DataOptimization(EDA):
 
         # Perform the split
         X_train, X_test, y_train, y_test = train_test_split(
-            X, y, test_size= 1 - train_size, random_state=random_state
+            X, y, test_size=test_size, random_state=random_state
         )
 
-        print(f"Data split:\n- Training: {X_train.shape[0]} rows\n- Test: {X_test.shape[0]} rows")
+        print(f"Data split:\n- Training: {X_train.shape[0]} rows ({train_size*100:.1f}%)\n- Test: {X_test.shape[0]} rows ({test_size*100:.1f}%)")
         return X_train, X_test, y_train, y_test
 
 #------------------------Search Components--------------------------------------------------------------
@@ -473,7 +472,7 @@ class DataOptimization(EDA):
         return results
 
 #------------------------Director Function--------------------------------------------------------------
-    def opti_director(self, target_column, problem_type='regression', method='both', random_state=42):
+    def opti_director(self, target_column, problem_type='regression', method='both', test_size=0.2, random_state=42):
         """
         This method orchestrates the optimization process for every model in this class.
         1. Make the data split
@@ -484,6 +483,7 @@ class DataOptimization(EDA):
         - target_column: str -> Name of the target column (y).
         - problem_type: str -> Type of problem ('regression' or 'classification').
         - method: str -> What optimization method is going to be used ('genetic', 'exhaustive', or 'both').
+        - test_size: float -> Proportion of the test set (default 0.2, which means 80% for training).
         - random_state: int -> Random seed for reproducibility.
 
         Returns:
@@ -508,6 +508,7 @@ class DataOptimization(EDA):
         # 1. Make the data split
         self.X_train, self.X_test, self.y_train, self.y_test = self.split_df(
             target_column=target_column,
+            test_size=test_size,
             random_state=random_state
         )
 
@@ -537,22 +538,6 @@ class DataOptimization(EDA):
                 model_params = {param.replace('clf__', ''): value for param, value in best_params_model.items()}
                 clean_exhaustive_params[model_name] = model_params
             best_params['exhaustive'] = clean_exhaustive_params
-
-        print("\n----- MEJORES PARÁMETROS ENCONTRADOS -----")
-
-        if 'genetic' in best_params:
-            print("\n=== MÉTODO GENÉTICO ===")
-            for model_name, params in best_params['genetic'].items():
-                print(f"{model_name}:")
-                for param_name, value in params.items():
-                    print(f"  {param_name}: {value}")
-
-        if 'exhaustive' in best_params:
-            print("\n=== MÉTODO EXHAUSTIVO ===")
-            for model_name, params in best_params['exhaustive'].items():
-                print(f"{model_name}:")
-                for param_name, value in params.items():
-                    print(f"  {param_name}: {value}")
 
         return best_params
 
@@ -1044,6 +1029,7 @@ class Supervisado:
 
         return self.all_model_results
 
+
 # Prueba para visualizar
     def visualizar_comparacion_modelos(self, metrica='accuracy', figsize=(12, 8), guardar_grafico=False, ruta_guardado=None):
         if not self.all_model_results:
@@ -1155,3 +1141,58 @@ class Supervisado:
 
         return fig, ax
 
+# Forecast
+class TimeSeriesModel:
+    def _init_(self, df, date_col, value_col, model_type='prophet'):
+        """
+        Initialize the time series model using Prophet or XGBoost.
+
+        Parameters:
+        - df: pandas DataFrame with time series data
+        - date_col: column with datetime values
+        - value_col: column with the target values
+        - model_type: 'prophet' or 'xgboost'
+        """
+        self.df = df.copy()
+        self.date_col = date_col
+        self.value_col = value_col
+        self.model_type = model_type
+        self.model = None
+        self.forecast_result = None
+
+    def train(self):
+        self.df[self.date_col] = pd.to_datetime(self.df[self.date_col])
+        self.df = self.df.sort_values(by=self.date_col)
+
+        if self.model_type == 'prophet':
+            prophet_df = self.df[[self.date_col, self.value_col]].rename(columns={self.date_col: 'ds', self.value_col: 'y'})
+            self.model = Prophet()
+            self.model.fit(prophet_df)
+
+        elif self.model_type == 'xgboost':
+            self.df['timestamp'] = self.df[self.date_col].astype(np.int64) // 10**9
+            X = self.df[['timestamp']]
+            y = self.df[self.value_col]
+            X_train, _, y_train, _ = train_test_split(X, y, test_size=0.2, random_state=42)
+            self.model = XGBRegressor(n_estimators=100)
+            self.model.fit(X_train, y_train)
+
+        else:
+            raise ValueError("Unsupported model type. Use 'prophet' or 'xgboost'.")
+
+    def forecast(self, steps=7):
+        if self.model_type == 'prophet':
+            future = self.model.make_future_dataframe(periods=steps)
+            forecast = self.model.predict(future)
+            return forecast[['ds', 'yhat']].tail(steps).set_index('ds')['yhat']
+
+        elif self.model_type == 'xgboost':
+            last_timestamp = self.df[self.date_col].max().timestamp()
+            future_timestamps = [(last_timestamp + i * 86400) for i in range(1, steps + 1)]
+            X_future = pd.DataFrame({'timestamp': future_timestamps})
+            predictions = self.model.predict(X_future)
+            future_dates = pd.date_range(start=self.df[self.date_col].max() + pd.Timedelta(days=1), periods=steps)
+            return pd.Series(predictions, index=future_dates)
+
+        else:
+            raise ValueError("Model not trained or unsupported model type.")

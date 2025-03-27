@@ -4,8 +4,9 @@ from streamlit_option_menu import option_menu
 
 # Import other modules
 import about
+import start
 from eda import EDAApp
-import results
+import supervised_results as supervised_results
 
 main_color = "#384B70"
 
@@ -13,8 +14,8 @@ main_color = "#384B70"
 with st.sidebar:
     selected = option_menu(
         menu_title="Menu",
-        options=["EDA", "Results", "About"],
-        icons=["bar-chart", "rocket-takeoff", "bi bi-mortarboard"],
+        options=["Star Analysis" ,"EDA", "Results", "About"],
+        icons=["bi bi-sliders","bar-chart", "bi bi-clipboard2-data-fill", "bi bi-mortarboard"],
         menu_icon="cast",
         default_index=0,
         styles={
@@ -25,12 +26,12 @@ with st.sidebar:
         }
     )
   
-if selected == "EDA":
+if selected == "Star Analysis":
+    start.show()
+elif selected == "EDA":
     EDAApp.show()
-
 elif selected == "Results":
-    results.show()
-    
+    supervised_results.show()
 elif selected == "About":
     about.show()
 
