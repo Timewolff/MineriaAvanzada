@@ -1,12 +1,13 @@
 import streamlit as st
 import streamlit_antd_components as sac
 from streamlit_option_menu import option_menu
+import pandas as pd
 
 # Import other modules
 import about
 import start
 from eda import EDAApp
-import supervised_results as supervised_results
+import results as results
 
 main_color = "#384B70"
 
@@ -14,7 +15,7 @@ main_color = "#384B70"
 with st.sidebar:
     selected = option_menu(
         menu_title="Menu",
-        options=["Star Analysis" ,"EDA", "Results", "About"],
+        options=["Start Analysis" ,"EDA", "Results", "About"],
         icons=["bi bi-sliders","bar-chart", "bi bi-clipboard2-data-fill", "bi bi-mortarboard"],
         menu_icon="cast",
         default_index=0,
@@ -31,7 +32,9 @@ if selected == "Star Analysis":
 elif selected == "EDA":
     EDAApp.show()
 elif selected == "Results":
-    supervised_results.show()
+    results.show_supervised()
+    #unsupervised_results = unsupervised_model.get_results()
+    #results.show_unsupervised(unsupervised_results)
 elif selected == "About":
     about.show()
 
