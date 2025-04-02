@@ -3,80 +3,97 @@ import pandas as pd
 import numpy as np
 import matplotlib.pyplot as plt
 import seaborn as sns
+import altair as alt
 from eda import EDA
-from model.time_series import TimeSeriesModel
+#Por arreglar
+#from model.time_series import TimeSeriesModel
 
 def show_supervised():
-    st.title("Resultados del Modelo Supervisado")
-    
-    if 'resultados' not in st.session_state:
-        st.warning("No hay resultados disponibles. Por favor ejecuta el modelo primero desde la página 'EDA'.")
-        return
-    
+    # Load session data
     resultados = st.session_state['resultados']
-    modelo_supervisado = st.session_state['modelo_supervisado']
     problem_type = st.session_state['problem_type']
-    
-    st.header("Visualización Detallada de Modelos")
-    if problem_type == 'classification':
-        fig, ax = modelo_supervisado.visualizar_comparacion_modelos(metrica='roc_auc', figsize=(10, 6))
-    else:
-        fig, ax = modelo_supervisado.visualizar_comparacion_modelos(metrica='RMSE', figsize=(10, 6))
-    
-    st.pyplot(fig)
-    
-    st.header("Interpretación de Resultados")
-    
-    if problem_type == 'classification':
-        if any(res.get('roc_auc') is not None for res in resultados):
-            mejor_modelo = max([res for res in resultados if res.get('roc_auc') is not None], 
-                              key=lambda x: x['roc_auc'])
-            metrica_principal = 'ROC AUC'
-            valor_metrica = mejor_modelo['roc_auc']
-        else:
-            mejor_modelo = max(resultados, key=lambda x: x['accuracy'])
-            metrica_principal = 'accuracy'
-            valor_metrica = mejor_modelo['accuracy']
-    else:
-        mejor_modelo = min(resultados, key=lambda x: x['RMSE'])
-        metrica_principal = 'RMSE'
-        valor_metrica = mejor_modelo['RMSE']
-    
-    st.subheader(f"Mejor modelo: {mejor_modelo['modelo']}")
-    st.write(f"El mejor modelo según la métrica {metrica_principal} es **{mejor_modelo['modelo']}** con un valor de {valor_metrica:.4f}.")
-    
-    if '(Default)' in mejor_modelo['modelo']:
-        st.write("Este modelo funciona mejor con sus parámetros predeterminados.")
-    elif '(Genetic)' in mejor_modelo['modelo']:
-        st.write("Este modelo fue optimizado usando algoritmos genéticos.")
-    elif '(Exhaustive)' in mejor_modelo['modelo']:
-        st.write("Este modelo fue optimizado usando búsqueda exhaustiva de parámetros.")
-    
-    st.subheader("Parámetros optimizados")
-    
-    if 'best_params' in st.session_state:
-        best_params = st.session_state['best_params']
-        
-        tabs = st.tabs(["Método Genético", "Método Exhaustivo"])
-        
-        with tabs[0]:
-            if 'genetic' in best_params:
-                for model_name, params in best_params['genetic'].items():
-                    st.write(f"**{model_name}**:")
-                    for param_name, value in params.items():
-                        st.write(f"- {param_name}: {value}")
-            else:
-                st.write("No se utilizó el método genético.")
-                
-        with tabs[1]:
-            if 'exhaustive' in best_params:
-                for model_name, params in best_params['exhaustive'].items():
-                    st.write(f"**{model_name}**:")
-                    for param_name, value in params.items():
-                        st.write(f"- {param_name}: {value}")
-            else:
-                st.write("No se utilizó el método exhaustivo.")
 
+    # Select metric based on problem type
+    metric = 'roc_auc' if problem_type == 'classification' else 'RMSE'
+
+    # Prepare values by model and optimization type
+    data_dict = {}
+    for resultado in resultados:
+        nombre_completo = resultado.get('modelo')
+        if metric not in resultado:
+            continue
+        if '(' in nombre_completo:
+            nombre_base, optimizacion = nombre_completo.split('(')
+            optimizacion = optimizacion.replace(')', '').strip()
+        else:
+            nombre_base = nombre_completo
+            optimizacion = 'Default'
+        nombre_base = nombre_base.strip()
+        data_dict.setdefault(nombre_base, {})[optimizacion] = resultado[metric]
+
+    # Build DataFrame
+    modelos = sorted(data_dict.keys())
+    df_chart = pd.DataFrame({opt: [data_dict.get(m, {}).get(opt, 0) for m in modelos]
+                             for opt in ['Default', 'Genetic', 'Exhaustive']},
+                            index=modelos)
+
+    if metric == 'RMSE':
+        st.caption("Note: For RMSE, lower values are better.")
+    else:
+        chart_metric = "AUC"
+
+    # Reshape data for Altair
+    df_long = df_chart.reset_index().melt(id_vars='index', var_name='Optimization', value_name='Value')
+    df_long.rename(columns={'index': 'Model'}, inplace=True)
+
+    st.subheader("Model Performance Comparison Between Optimization Methods")
+    # Define custom colors
+    color_scale = alt.Scale(domain=['Default', 'Genetic', 'Exhaustive'],
+                            range=['#384B70', '#B8001F', '#507687'])
+
+    # Main bar chart
+    bars = alt.Chart(df_long).mark_bar().encode(
+        x=alt.X('Model:N', title='Model',
+            axis=alt.Axis(
+                labelAngle=0,
+                labelFontSize=16,
+                titleFontSize=16,
+                labelLimit=0
+            )
+        ),
+        y=alt.Y('Value:Q',
+            axis=alt.Axis(labels=False, ticks=False, title=chart_metric, titleFontSize=18)),
+        color=alt.Color('Optimization:N', scale=color_scale,
+                        legend=alt.Legend(title="Parameters")),
+        xOffset='Optimization:N',
+        tooltip=['Model', 'Optimization', 'Value']
+    )
+
+    # Text on top of bars
+    text = alt.Chart(df_long).mark_text(
+        align='center',
+        baseline='bottom',
+        dy=-5,
+        fontSize=13
+    ).encode(
+        x=alt.X('Model:N'),
+        xOffset=alt.X('Optimization:N'),
+        y=alt.Y('Value:Q'),
+        text=alt.Text('Value:Q', format=".3f"),
+        tooltip=['Model', 'Optimization', 'Value']
+    )
+
+    # Combine and render
+    chart = (bars + text).properties(
+        width=900,
+        height=400
+    )
+
+    st.altair_chart(chart, use_container_width=True)
+
+
+
+                
 def show_forecast():
     st.header("Forecast Results")
 
@@ -92,9 +109,10 @@ def show_forecast():
     steps = st.slider("Number of days to forecast", 1, 30, 7)
 
     if st.button("Run Forecast"):
-        ts_model = TimeSeriesModel(df, date_col, value_col, model_type)
+        pass
+        '''ts_model = TimeSeriesModel(df, date_col, value_col, model_type)
         ts_model.train()
         forecast = ts_model.forecast(steps)
 
         st.line_chart(forecast)
-        st.success("Forecast completed.")
+        st.success("Forecast completed.")'''
