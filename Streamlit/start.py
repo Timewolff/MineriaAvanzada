@@ -83,10 +83,10 @@ def show():
             eda = model.EDA(file=dataset_path)
             
             # Call the data optimization class
-            optimizador = model.DataOptimization(eda)
+            optimizator = model.DataOptimization(eda)
             
             # Get the best parameters
-            best_params = optimizador.opti_director(
+            best_params = optimizator.opti_director(
                 target_column=target_column,
                 problem_type=problem_type,
                 method=method,
@@ -94,17 +94,17 @@ def show():
             )
             
             # Creation of the supervised model
-            modelo_supervisado = model.Supervisado(optimizador, best_params=best_params)
+            supervised_model = model.Supervisado(optimizator, best_params=best_params)
             
             # Compare the results of the models
-            resultados = modelo_supervisado.model_director(compare_params=True)
+            supervised_results = supervised_model.model_director(compare_params=True)
             
             # Store results
             st.session_state['eda'] = eda
-            st.session_state['optimizador'] = optimizador
+            st.session_state['optimizador'] = optimizator
             st.session_state['best_params'] = best_params
-            st.session_state['modelo_supervisado'] = modelo_supervisado
-            st.session_state['resultados'] = resultados
+            st.session_state['modelo_supervisado'] = supervised_model
+            st.session_state['resultados'] = supervised_results
             st.session_state['problem_type'] = problem_type
             
             # Message of success 
