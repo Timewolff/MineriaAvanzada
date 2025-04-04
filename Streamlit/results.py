@@ -4,6 +4,7 @@ import numpy as np
 import matplotlib.pyplot as plt
 import seaborn as sns
 import altair as alt
+import model
 from eda import EDA
 #Por arreglar
 #from model.time_series import TimeSeriesModel
@@ -43,7 +44,7 @@ def show_supervised():
     df_long = df_chart.reset_index().melt(id_vars='index', var_name='Optimization', value_name='Value')
     df_long.rename(columns={'index': 'Model'}, inplace=True)
 
-    st.subheader("Model Performance Comparison Between Optimization Methods")
+    st.subheader("Performance Breakdown by Optimization Strategy")
     # Custom colors
     color_scale = alt.Scale(domain=['Default', 'Genetic', 'Exhaustive'],
                             range=['#384B70', '#B8001F', '#507687'])
@@ -105,7 +106,7 @@ def show_supervised():
     # Grid of best metrics
     col1, col2 = st.columns(2)
     with col1:
-        st.subheader(f"Summary: {best_model_name}*")
+        st.subheader(f"Summary: {best_model_name}")
         a, b = st.columns(2)
         c, d = st.columns(2)
 
@@ -115,21 +116,30 @@ def show_supervised():
         d.metric("F1 Score", f1_score, border=True)
         st.caption("*The best algorithm was selected using AUC")
     with col2:
-        selected_metric = st.selectbox(
-            "Pick a metric to compare algorithm performance",
-            ['accuracy', 'precision', 'recall', 'f1_score', 'roc_auc']
-        )
-        df_full, _ = build_dataframe(resultados, problem_type)
-        st.write(df_chart) 
+        st.subheader("Peformance Metrics by Model")
 
-        if selected_metric in df_full.columns.get_level_values(0):
-            metric_series = df_full[selected_metric]['Exhaustive']
-            # Graph the selected metric
-            st.bar_chart(metric_series.sort_values(), use_container_width=True)
+        modelo = st.session_state['modelo_supervisado']
+        df_exhaustivo = modelo.get_exhaustive_metrics()
+
+        if not df_exhaustivo.empty:
+            styled_df = df_exhaustivo.style.apply(
+                lambda s: ['background-color: #c2c7d8' if v == s.max() else '' for v in s],
+                axis=0,
+                subset=df_exhaustivo.columns[1:]  # omitir 'Modelo'
+            )
+            st.dataframe(styled_df, use_container_width=True)
+        else:
+            st.warning("No exhaustive results available.")
+        st.caption("Results obtained using only exhaustive search.")
 
 
 
-                
+
+
+        
+
+
+
 def show_forecast():
     st.header("Forecast Results")
 

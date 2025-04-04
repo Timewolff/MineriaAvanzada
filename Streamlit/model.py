@@ -1030,3 +1030,24 @@ class Supervisado:
         with open("resultados_modelo.txt", "w", encoding="utf-8") as f:
             f.write(str(self.all_model_results))
         return self.all_model_results
+    
+
+    def get_exhaustive_metrics(self):
+        """
+        Extract metrics from all models that used exhaustive search.
+
+        Returns:
+            Dataframe with metrics for each model.
+        """
+        metricas = ['accuracy', 'precision', 'recall', 'f1_score', 'roc_auc', 'RMSE']
+        data = []
+
+        for resultado in self.all_model_results:
+            if 'Exhaustive' in resultado['modelo']:
+                fila = {'Modelo': resultado['modelo']}
+                for m in metricas:
+                    if m in resultado:
+                        fila[m] = resultado[m]
+                data.append(fila)
+
+        return pd.DataFrame(data)
