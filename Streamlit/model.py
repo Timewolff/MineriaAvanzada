@@ -762,7 +762,7 @@ class Supervisado:
         self.__df = p_df
 
 #-----------------Evaluating Models----------------------------
-    def regre_metrics(self, modelo, X_test, y_test, predicciones, model_name):
+    def regre_metrics(self, modelo, X_test, y_test, predictions, model_name):
       """
       Calculate the model evaluation metrics and save the results in a dictionary.
 
@@ -777,14 +777,14 @@ class Supervisado:
       - resultados: Dictionary containing evaluation metrics.
       """
       # Regression metrics
-      mse = mean_squared_error(y_test, predicciones)
-      r2 = r2_score(y_test, predicciones)
-      mae = mean_absolute_error(y_test, predicciones)
+      mse = mean_squared_error(y_test, predictions)
+      r2 = r2_score(y_test, predictions)
+      mae = mean_absolute_error(y_test, predictions)
       rmse = np.sqrt(mse)
 
       # Calculate global precision
       tolerancia = 0.1  # 10% of tolerance
-      precision_global = np.mean(np.abs(y_test - predicciones) <= (tolerancia * y_test)) * 100
+      precision_global = np.mean(np.abs(y_test - predictions) <= (tolerancia * y_test)) * 100
 
       resultados = {
           'modelo': model_name,
@@ -793,12 +793,12 @@ class Supervisado:
           'MAE': mae,
           'RMSE': rmse,
           'precision_global': precision_global,
-          #'predicciones': predicciones.tolist(),
-          #'valores_reales': y_test.tolist()
+          'predicted_values': predictions.tolist(),
+          'real_values': y_test.tolist()
       }
       return resultados
 
-    def classi_metrics(self, modelo, X_test, y_test, predicciones, model_name):
+    def classi_metrics(self, modelo, X_test, y_test, predictions, model_name):
         """
         Calculate evaluation metrics for classification models and store the results in a dictionary.
 
@@ -812,10 +812,10 @@ class Supervisado:
         """
         from sklearn.metrics import accuracy_score, precision_score, recall_score, f1_score, roc_auc_score
 
-        accuracy = accuracy_score(y_test, predicciones)
-        precision = precision_score(y_test, predicciones, average='weighted', zero_division=0)
-        recall = recall_score(y_test, predicciones, average='weighted', zero_division=0)
-        f1 = f1_score(y_test, predicciones, average='weighted', zero_division=0)
+        accuracy = accuracy_score(y_test, predictions)
+        precision = precision_score(y_test, predictions, average='weighted', zero_division=0)
+        recall = recall_score(y_test, predictions, average='weighted', zero_division=0)
+        f1 = f1_score(y_test, predictions, average='weighted', zero_division=0)
 
         # Define auc variable before conditional block to avoid UnboundLocalError
         auc = None
@@ -835,7 +835,9 @@ class Supervisado:
             'precision': precision,
             'recall': recall,
             'f1_score': f1,
-            'roc_auc': auc
+            'roc_auc': auc,
+            'predicted_values': predictions.tolist(),
+            'real_values': y_test.tolist()
         }
 
         return resultados

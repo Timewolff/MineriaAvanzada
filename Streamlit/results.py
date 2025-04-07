@@ -6,6 +6,7 @@ import seaborn as sns
 import altair as alt
 import model
 from eda import EDA
+from sklearn.metrics import confusion_matrix
 #Por arreglar
 #from model.time_series import TimeSeriesModel
 
@@ -103,7 +104,7 @@ def show_supervised():
         precision = round(best_finder_metrics.get("precision", 0), 3)
         f1_score = round(best_finder_metrics.get("f1_score", 0), 3)
 
-    # Grid of best metrics
+    # First column level
     col1, col2 = st.columns(2)
     with col1:
         st.subheader(f"Summary: {best_model_name}")
@@ -131,9 +132,32 @@ def show_supervised():
         else:
             st.warning("No exhaustive results available.")
         st.caption("Results obtained using only exhaustive search.")
+    
+    # Predictions vs Real and processing time
 
+    # Dataframe for predictions vs real
+    best_model = next((r for r in resultados if r['modelo'] == good_name_model), None)
 
+    # Second column level
+    col1, col2 = st.columns(2)
 
+    with col1:
+        if best_model and 'real_values' in best_model and 'predicted_values' in best_model:
+            real = best_model['real_values']
+            pred = best_model['predicted_values']
+
+            with col1:
+                st.subheader("Confusion Matrix")
+                labels = sorted(list(set(real + pred)))
+                cm = confusion_matrix(real, pred)
+                fig, ax = plt.subplots()
+                sns.heatmap(cm, annot=True, fmt="d", cmap="Blues",xticklabels=labels,yticklabels=labels, ax=ax)
+                ax.set_xlabel("Predicted")
+                ax.set_ylabel("Actual")
+                st.pyplot(fig)
+                st.caption("Evaluation based on the model with the highest AUC under exhaustive search.")
+        else:
+            st.warning("Confusion matrix data is not available for this model.\n Evaluation based on the model with the highest AUC under exhaustive search.")
 
 
         
