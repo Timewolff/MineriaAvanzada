@@ -1,0 +1,208 @@
+{
+  "columns": [
+    {
+      "minWidth": 40,
+      "download": false,
+      "formatter": "rowSelection",
+      "titleFormatter": "rowSelection",
+      "resizable": true,
+      "headerSort": false,
+      "width": 51
+    },
+    {
+      "field": "Id",
+      "title": "Id",
+      "minWidth": 40,
+      "resizable": true,
+      "sorter": "number",
+      "headerSort": true,
+      "width": 68
+    },
+    {
+      "field": "Year",
+      "title": "Year",
+      "minWidth": 40,
+      "resizable": true,
+      "sorter": "string",
+      "headerSort": true,
+      "width": 82
+    },
+    {
+      "field": "Kilometers_Driven",
+      "title": "Kilometers_Driven",
+      "minWidth": 40,
+      "resizable": true,
+      "sorter": "number",
+      "headerSort": true,
+      "width": 168
+    },
+    {
+      "field": "Mileage",
+      "title": "Mileage",
+      "minWidth": 40,
+      "resizable": true,
+      "sorter": "number",
+      "headerSort": true,
+      "width": 106
+    },
+    {
+      "field": "Engine",
+      "title": "Engine",
+      "minWidth": 40,
+      "resizable": true,
+      "sorter": "number",
+      "headerSort": true,
+      "width": 98
+    },
+    {
+      "field": "Power",
+      "title": "Power",
+      "minWidth": 40,
+      "resizable": true,
+      "sorter": "number",
+      "headerSort": true,
+      "width": 94
+    },
+    {
+      "field": "Seats",
+      "title": "Seats",
+      "minWidth": 40,
+      "resizable": true,
+      "sorter": "number",
+      "headerSort": true,
+      "width": 89
+    },
+    {
+      "field": "Price",
+      "title": "Price",
+      "minWidth": 40,
+      "resizable": true,
+      "sorter": "number",
+      "headerSort": true,
+      "width": 86
+    },
+    {
+      "field": "Fuel_Type_CNG",
+      "title": "Fuel_Type_CNG",
+      "minWidth": 40,
+      "resizable": true,
+      "sorter": "number",
+      "headerSort": true,
+      "width": 151
+    },
+    {
+      "field": "Fuel_Type_Diesel",
+      "title": "Fuel_Type_Diesel",
+      "minWidth": 40,
+      "resizable": true,
+      "sorter": "number",
+      "headerSort": true,
+      "width": 160
+    },
+    {
+      "field": "Fuel_Type_Electric",
+      "title": "Fuel_Type_Electric",
+      "minWidth": 40,
+      "resizable": true,
+      "sorter": "number",
+      "headerSort": true,
+      "width": 166
+    },
+    {
+      "field": "Fuel_Type_LPG",
+      "title": "Fuel_Type_LPG",
+      "minWidth": 40,
+      "resizable": true,
+      "sorter": "number",
+      "headerSort": true,
+      "width": 146
+    },
+    {
+      "field": "Fuel_Type_Petrol",
+      "title": "Fuel_Type_Petrol",
+      "minWidth": 40,
+      "resizable": true,
+      "sorter": "number",
+      "headerSort": true,
+      "width": 158
+    },
+    {
+      "field": "Owner_Type_First",
+      "title": "Owner_Type_First",
+      "minWidth": 40,
+      "resizable": true,
+      "sorter": "number",
+      "headerSort": true,
+      "width": 163
+    },
+    {
+      "field": "Owner_Type_Fourth & Above",
+      "title": "Owner_Type_Fourth & Above",
+      "minWidth": 40,
+      "resizable": true,
+      "sorter": "number",
+      "headerSort": true,
+      "width": 237
+    },
+    {
+      "field": "Owner_Type_Second",
+      "title": "Owner_Type_Second",
+      "minWidth": 40,
+      "resizable": true,
+      "sorter": "number",
+      "headerSort": true,
+      "width": 183
+    },
+    {
+      "field": "Owner_Type_Third",
+      "title": "Owner_Type_Third",
+      "minWidth": 40,
+      "resizable": true,
+      "sorter": "number",
+      "headerSort": true,
+      "width": 169
+    },
+    {
+      "field": "Mileage_Type_km/kg",
+      "title": "Mileage_Type_km/kg",
+      "minWidth": 40,
+      "resizable": true,
+      "sorter": "number",
+      "headerSort": true,
+      "width": 186
+    },
+    {
+      "field": "Mileage_Type_kmpl",
+      "title": "Mileage_Type_kmpl",
+      "minWidth": 40,
+      "resizable": true,
+      "sorter": "number",
+      "headerSort": true,
+      "width": 177
+    },
+    {
+      "field": "Transmission_Automatic",
+      "title": "Transmission_Automatic",
+      "minWidth": 40,
+      "resizable": true,
+      "sorter": "number",
+      "headerSort": true,
+      "width": 205
+    },
+    {
+      "field": "Transmission_Manual",
+      "title": "Transmission_Manual",
+      "minWidth": 40,
+      "resizable": true,
+      "sorter": "number",
+      "headerSort": true,
+      "width": 187
+    }
+  ],
+  "sort": [
+    {
+      "column": "Id",
+      "dir": "asc"
+    }
+  ]
+}

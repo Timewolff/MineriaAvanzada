@@ -1,0 +1,112 @@
+{
+  "fields": [
+    {
+      "name": "Id",
+      "type": "integer",
+      "format": "default"
+    },
+    {
+      "name": "Year",
+      "type": "year",
+      "format": "default"
+    },
+    {
+      "name": "Kilometers_Driven",
+      "type": "integer",
+      "format": "default"
+    },
+    {
+      "name": "Mileage",
+      "type": "number",
+      "format": "default"
+    },
+    {
+      "name": "Engine",
+      "type": "number",
+      "format": "default"
+    },
+    {
+      "name": "Power",
+      "type": "number",
+      "format": "default"
+    },
+    {
+      "name": "Seats",
+      "type": "number",
+      "format": "default"
+    },
+    {
+      "name": "Price",
+      "type": "number",
+      "format": "default"
+    },
+    {
+      "name": "Fuel_Type_CNG",
+      "type": "integer",
+      "format": "default"
+    },
+    {
+      "name": "Fuel_Type_Diesel",
+      "type": "integer",
+      "format": "default"
+    },
+    {
+      "name": "Fuel_Type_Electric",
+      "type": "integer",
+      "format": "default"
+    },
+    {
+      "name": "Fuel_Type_LPG",
+      "type": "integer",
+      "format": "default"
+    },
+    {
+      "name": "Fuel_Type_Petrol",
+      "type": "integer",
+      "format": "default"
+    },
+    {
+      "name": "Owner_Type_First",
+      "type": "integer",
+      "format": "default"
+    },
+    {
+      "name": "Owner_Type_Fourth & Above",
+      "type": "integer",
+      "format": "default"
+    },
+    {
+      "name": "Owner_Type_Second",
+      "type": "integer",
+      "format": "default"
+    },
+    {
+      "name": "Owner_Type_Third",
+      "type": "integer",
+      "format": "default"
+    },
+    {
+      "name": "Mileage_Type_km/kg",
+      "type": "integer",
+      "format": "default"
+    },
+    {
+      "name": "Mileage_Type_kmpl",
+      "type": "integer",
+      "format": "default"
+    },
+    {
+      "name": "Transmission_Automatic",
+      "type": "integer",
+      "format": "default"
+    },
+    {
+      "name": "Transmission_Manual",
+      "type": "integer",
+      "format": "default"
+    }
+  ],
+  "missingValues": [
+    ""
+  ]
+}

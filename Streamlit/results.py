@@ -5,9 +5,10 @@ import matplotlib.pyplot as plt
 import seaborn as sns
 import altair as alt
 import model
+import json
 from eda import EDA
 from sklearn.metrics import confusion_matrix
-#Por arreglar
+#Needs revision
 #from model.time_series import TimeSeriesModel
 
 def build_dataframe(resultados, problem_type):
@@ -159,10 +160,60 @@ def show_supervised():
         else:
             st.warning("Confusion matrix data is not available for this model.\n Evaluation based on the model with the highest AUC under exhaustive search.")
 
-
+    with col2:
+        st.subheader("Optimization Execution Time")
+        # Load execution times from JSON file
+        with open('DO_execution_time.json', 'r') as f:
+            execution_times = json.load(f)
         
-
-
+        # Convert dictionary to DataFrame for Altair
+        times_df = pd.DataFrame({
+            'Optimization': list(execution_times.keys()),
+            'Time': list(execution_times.values())
+        })
+        
+        # Capitalize method names for better presentation
+        times_df['Optimization'] = times_df['Optimization'].str.capitalize()
+        
+        # Create vertical bar chart with improved styling
+        bars = alt.Chart(times_df).mark_bar().encode(
+            x=alt.X('Optimization:N', 
+                axis=alt.Axis(
+                    labelAngle=0,
+                    labelFontSize=16,
+                    title=None
+                )
+            ),
+            y=alt.Y('Time:Q',
+                axis=alt.Axis(title='Time (seconds)', titleFontSize=18)),
+            color=alt.Color('Optimization:N', 
+                        scale=alt.Scale(domain=['Genetic', 'Exhaustive', 'Optimization'],
+                                        range=['#B8001F', '#507687', '#384B70']),
+                        legend=None),  # Eliminar leyenda
+            tooltip=['Optimization', 'Time']
+        )
+        
+        # Text on top of bars
+        text = alt.Chart(times_df).mark_text(
+            align='center',
+            baseline='bottom',
+            dy=-5,
+            fontSize=13,
+            fontWeight='bold'
+        ).encode(
+            x=alt.X('Optimization:N'),
+            y=alt.Y('Time:Q'),
+            text=alt.Text('Time:Q', format=".2f"),
+            tooltip=['Optimization', 'Time']
+        )
+        
+        # Combine and render
+        chart = (bars + text).properties(
+            height=400
+        )
+        
+        # Display chart in Streamlit
+        st.altair_chart(chart, use_container_width=True)
 
 def show_forecast():
     st.header("Forecast Results")

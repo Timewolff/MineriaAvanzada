@@ -21,6 +21,11 @@ import matplotlib.pyplot as plt
 import plotly.express as px
 import umap.umap_ as umap
 
+# Timing and export json files
+import time
+import json
+import os
+
 # Data Optimization
 from sklearn_genetic import GASearchCV
 from sklearn.pipeline import Pipeline
@@ -489,6 +494,9 @@ class DataOptimization(EDA):
         Returns:
         - dict -> Keeps the best parameters for each model.
         """
+        # Start the timer
+        start_time_total = time.time()
+
         # Set up models and parameter grids based on problem type
         if problem_type.lower() == 'regression':
             self.models = self.regression_models
@@ -515,29 +523,58 @@ class DataOptimization(EDA):
         # 2. Performs the optimization of models (genetic, exhaustive or both)
         best_params = {}
 
+        # Execution timer
+        self.execution_times = {'Optimization': 0}
+
         if method.lower() == 'genetic' or method.lower() == 'both':
+            # Genetic timer
+            genetic_start_time = time.time()
+            # First run the function
             genetic_results = self.genetic_search(scoring_metric)
+            # Then calculate the time
+            genetic_time = time.time() - genetic_start_time
+            self.execution_times['genetic'] = genetic_time
+            print(f"Genetic search completed in {genetic_time:.2f} seconds")
 
             # 3. Extract the best parameters in a clean format
             clean_genetic_params = {}
             for model_name, model_result in genetic_results.items():
                 best_params_model = model_result['best_params']
-                # Eliminar el prefijo 'clf__' de los nombres de los parámetros
+                # Delete the prefix 'clf__' from parameter names
                 model_params = {param.replace('clf__', ''): value for param, value in best_params_model.items()}
                 clean_genetic_params[model_name] = model_params
             best_params['genetic'] = clean_genetic_params
 
         if method.lower() == 'exhaustive' or method.lower() == 'both':
+            # Exhaustive timer
+            exhaustive_start_time = time.time()
+            # First run the function
             exhaustive_results = self.exhaustive_search(scoring_metric)
+            # Then calculate the time
+            exhaustive_time = time.time() - exhaustive_start_time
+            self.execution_times['exhaustive'] = exhaustive_time
+            print(f"Exhaustive search completed in {exhaustive_time:.2f} seconds")
 
             # 3. Extract the best parameters in a clean format
             clean_exhaustive_params = {}
             for model_name, model_result in exhaustive_results.items():
                 best_params_model = model_result['best_params']
-                # Eliminar el prefijo 'clf__' de los nombres de los parámetros
+                # Delete the prefix 'clf__' from parameter names
                 model_params = {param.replace('clf__', ''): value for param, value in best_params_model.items()}
                 clean_exhaustive_params[model_name] = model_params
             best_params['exhaustive'] = clean_exhaustive_params
+
+        # End of timer
+        self.execution_times['Optimization'] = time.time() - start_time_total
+        print(f"Total optimization process completed in {self.execution_times['Optimization']:.2f} seconds")
+
+        # Export the execution times to a JSON file
+        try:
+            with open('DO_execution_time.json', 'w') as f:
+                json.dump(self.execution_times, f, indent=4)
+            print("Timing exported in DO_execution_time.json")
+        except:
+            print("\nSorry, the timing could not be exported...")
 
         return best_params
 
