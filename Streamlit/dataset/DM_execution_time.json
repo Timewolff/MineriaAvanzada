@@ -1,0 +1,7 @@
+{
+    "Total": 3.460792064666748,
+    "DecisionTreeClassifier": 0.05614280700683594,
+    "KNeighborsClassifier": 0.07525324821472168,
+    "RandomForestClassifier": 2.593249559402466,
+    "AdaBoostClassifier": 0.7309169769287109
+}

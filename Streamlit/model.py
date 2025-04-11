@@ -570,11 +570,12 @@ class DataOptimization(EDA):
 
         # Export the execution times to a JSON file
         try:
-            with open('DO_execution_time.json', 'w') as f:
+            file_path = os.path.join('dataset', 'DO_execution_time.json')
+            with open(file_path, 'w') as f:
                 json.dump(self.execution_times, f, indent=4)
-            print("Timing exported in DO_execution_time.json")
-        except:
-            print("\nSorry, the timing could not be exported...")
+            print(f"Timing exported in {file_path}")
+        except Exception as e:
+            print(f"\nSorry, the timing could not be exported... Error: {e}")
 
         return best_params
 
@@ -734,6 +735,9 @@ class Supervisado:
 
         # Results storage for comparison
         self.all_model_results = []
+        
+        # Dictionary to store execution times of each algorithm
+        self.execution_times = {'Total': 0}
 
         # Define classification models dictionary for easier iteration
         self.classification_models = {
@@ -788,8 +792,7 @@ class Supervisado:
                 'display_name': 'XGBoost Regressor'
             }
         }
-
-
+    
     @property
     def df(self):
         return self.__df
@@ -904,6 +907,7 @@ class Supervisado:
         print(f"Starting {display_name}...")
 
         results = []
+        model_timer = time.time()  # Start timer for this model
 
         # 1. Default parameters
         default_model = model_info['model_class'](**model_info['default_params'])
@@ -940,7 +944,13 @@ class Supervisado:
                     ex_model, X_test, y_test, ex_preds, f'{display_name} (Exhaustive)')
                 results.append(ex_results)
 
+        # Calculate and store execution time for this model
+        model_execution_time = time.time() - model_timer
+        self.execution_times[display_name] = model_execution_time
+        print(f"{display_name} completed in {model_execution_time:.2f} seconds")
+
         return results
+
 
 #------------------------ Running Classification Algorithms---------------------------------------------------------
 
@@ -965,6 +975,7 @@ class Supervisado:
         print(f"Starting {model_key}...")
 
         results = []
+        model_timer = time.time()  # Start timer for this model
 
         # 1. Default parameters
         default_model = model_info['model_class'](**model_info['default_params'])
@@ -1001,6 +1012,11 @@ class Supervisado:
                     ex_model, X_test, y_test, ex_preds, f'{model_key} (Exhaustive)')
                 results.append(ex_results)
 
+        # Calculate and store execution time for this model
+        model_execution_time = time.time() - model_timer
+        self.execution_times[model_key] = model_execution_time
+        print(f"{model_key} completed in {model_execution_time:.2f} seconds")
+
         return results
 
     def model_director(self, compare_params=False):
@@ -1013,6 +1029,9 @@ class Supervisado:
         Returns:
         - List of dictionaries containing evaluation metrics for each executed model
         """
+        # Start total execution timer
+        start_time_total = time.time()
+        
         # Print information about the data being used
         print(f"Evaluating models with X_train: {self.X_train.shape}, X_test: {self.X_test.shape}")
 
@@ -1066,8 +1085,20 @@ class Supervisado:
                 best_model = min(self.all_model_results, key=lambda x: x['RMSE'])
                 print(f"\nBest model (based on RMSE): {best_model['modelo']} with RMSE: {best_model['RMSE']:.4f}")
 
-        with open("resultados_modelo.txt", "w", encoding="utf-8") as f:
-            f.write(str(self.all_model_results))
+        # Calculate total execution time
+        self.execution_times['Total'] = time.time() - start_time_total
+        print(f"Total model evaluation completed in {self.execution_times['Total']:.2f} seconds")
+        
+        # Export the execution times to a JSON file
+        try:
+            file_path = os.path.join('dataset', 'DM_execution_time.json')
+            with open(file_path, 'w') as f:
+                json.dump(self.execution_times, f, indent=4)
+            print(f"Execution times exported to {file_path}")
+        except Exception as e:
+            print(f"\nError exporting execution times: {e}")
+
+
         return self.all_model_results
     
 

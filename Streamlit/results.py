@@ -5,6 +5,7 @@ import matplotlib.pyplot as plt
 import seaborn as sns
 import altair as alt
 import model
+import os
 import json
 from eda import EDA
 from sklearn.metrics import confusion_matrix
@@ -162,58 +163,146 @@ def show_supervised():
 
     with col2:
         st.subheader("Optimization Execution Time")
-        # Load execution times from JSON file
-        with open('DO_execution_time.json', 'r') as f:
-            execution_times = json.load(f)
+        # Load execution times from several JSON files inside "dataset" folder
+        file_path = os.path.join('dataset', 'DO_execution_time.json')
+        with open(file_path, 'r') as f:
+                optimization_execution_times = json.load(f)
+
+        file_path = os.path.join('dataset', 'DM_execution_time.json')
+        with open(file_path, 'r') as f:
+                model_execution_times = json.load(f)
         
-        # Convert dictionary to DataFrame for Altair
-        times_df = pd.DataFrame({
-            'Optimization': list(execution_times.keys()),
-            'Time': list(execution_times.values())
-        })
-        
-        # Capitalize method names for better presentation
-        times_df['Optimization'] = times_df['Optimization'].str.capitalize()
-        
-        # Create vertical bar chart with improved styling
-        bars = alt.Chart(times_df).mark_bar().encode(
-            x=alt.X('Optimization:N', 
-                axis=alt.Axis(
-                    labelAngle=0,
-                    labelFontSize=16,
-                    title=None
-                )
-            ),
-            y=alt.Y('Time:Q',
-                axis=alt.Axis(title='Time (seconds)', titleFontSize=18)),
-            color=alt.Color('Optimization:N', 
-                        scale=alt.Scale(domain=['Genetic', 'Exhaustive', 'Optimization'],
-                                        range=['#B8001F', '#507687', '#384B70']),
-                        legend=None),  # Eliminar leyenda
-            tooltip=['Optimization', 'Time']
+        # Select box for choosing chart about execution time
+        select_box_option = st.selectbox(
+            "Select a chart to view:",
+            ("Data Optimization Time", "Algorithm Execution Time"),
+            index=None,
+            placeholder="Choose an option...",
         )
-        
-        # Text on top of bars
-        text = alt.Chart(times_df).mark_text(
-            align='center',
-            baseline='bottom',
-            dy=-5,
-            fontSize=13,
-            fontWeight='bold'
-        ).encode(
-            x=alt.X('Optimization:N'),
-            y=alt.Y('Time:Q'),
-            text=alt.Text('Time:Q', format=".2f"),
-            tooltip=['Optimization', 'Time']
-        )
-        
-        # Combine and render
-        chart = (bars + text).properties(
-            height=400
-        )
-        
-        # Display chart in Streamlit
-        st.altair_chart(chart, use_container_width=True)
+
+        if select_box_option == "Data Optimization Time":
+            optimization_times = optimization_execution_times.copy()
+            total_optimization_time = optimization_times.pop('Optimization', None)
+            
+            # Convert dictionary to DataFrame for Altair
+            times_df = pd.DataFrame({
+                'Optimization': list(optimization_times.keys()),
+                'Time': list(optimization_times.values())
+            })
+            
+            # Capitalize method names for better presentation
+            times_df['Optimization'] = times_df['Optimization'].str.capitalize()
+            
+            # Create vertical bar chart with improved styling
+            bars = alt.Chart(times_df).mark_bar().encode(
+                x=alt.X('Optimization:N', 
+                    axis=alt.Axis(
+                        labelAngle=0,
+                        labelFontSize=16,
+                        title=None
+                    )
+                ),
+                y=alt.Y('Time:Q',
+                    axis=alt.Axis(title='Time (seconds)', titleFontSize=18)),
+                color=alt.Color('Optimization:N', 
+                            scale=alt.Scale(domain=['Genetic', 'Exhaustive'],
+                                            range=['#B8001F', '#507687']),
+                            legend=None),
+                tooltip=['Optimization', 'Time']
+            )
+            
+            # Text on top of bars
+            text = alt.Chart(times_df).mark_text(
+                align='center',
+                baseline='bottom',
+                dy=-5,
+                fontSize=13,
+                fontWeight='bold'
+            ).encode(
+                x=alt.X('Optimization:N'),
+                y=alt.Y('Time:Q'),
+                text=alt.Text('Time:Q', format=".2f"),
+                tooltip=['Optimization', 'Time']
+            )
+            
+            # Combine and render
+            chart = (bars + text).properties(
+                height=400
+            )
+            
+            # Display chart in Streamlit
+            st.altair_chart(chart, use_container_width=True)
+            
+            # Display total optimization time as a metric
+            if total_optimization_time:
+                st.metric("Total Optimization Processing Time", f"{total_optimization_time:.2f} seconds")
+            st.caption("Execution time for each optimization strategy in seconds")
+
+        elif select_box_option == "Algorithm Execution Time":
+            algorithm_times = model_execution_times.copy()
+            
+            # Remove 'Total' from the dictionary
+            total_time = algorithm_times.pop('Total', None)
+            
+            # Convert dictionary to DataFrame for Altair Graph
+            algo_times_df = pd.DataFrame({
+                'Algorithm': list(algorithm_times.keys()),
+                'Time': list(algorithm_times.values())
+            })
+            
+            # Sort by execution time in descending order for better visualization
+            algo_times_df = algo_times_df.sort_values('Time', ascending=False)
+            
+            # Calculate the number of unique algorithms
+            unique_algorithms = len(algo_times_df)
+            
+            # Color palette for the bars
+            color_set = ['#384B70', '#B8001F', '#3F51B5', '#C9B27C', '#768750', '#001FB8', '#00BCD4', '#4CAF50']
+            
+            # Create vertical bar chart
+            bars = alt.Chart(algo_times_df).mark_bar().encode(
+                x=alt.X('Algorithm:N', 
+                    axis=alt.Axis(
+                        labelAngle=0,
+                        labelFontSize=14,
+                        title=None
+                    )
+                ),
+                y=alt.Y('Time:Q',
+                    axis=alt.Axis(title='Time (seconds)', titleFontSize=18)),
+                color=alt.Color('Algorithm:N', 
+                            scale=alt.Scale(range=color_set[:unique_algorithms]),
+                            legend=None),
+                tooltip=['Algorithm', 'Time']
+            )
+            
+            # Text on top of bars
+            text = alt.Chart(algo_times_df).mark_text(
+                align='center',
+                baseline='bottom',
+                dy=-5,
+                fontSize=13,
+                fontWeight='bold'
+            ).encode(
+                x=alt.X('Algorithm:N'),
+                y=alt.Y('Time:Q'),
+                text=alt.Text('Time:Q', format=".2f"),
+                tooltip=['Algorithm', 'Time']
+            )
+            
+            # Combine and render
+            chart = (bars + text).properties(
+                height=400
+            )
+            
+            # Display chart in Streamlit
+            st.altair_chart(chart, use_container_width=True)
+            # Display total time
+            if total_time:
+                st.metric("Supervised Learning Processing Time", f"{total_time:.2f} seconds")
+            st.caption("Execution time for each algorithm in seconds")
+        else:
+            st.warning("Please select a valid option from the dropdown.")
 
 def show_forecast():
     st.header("Forecast Results")
