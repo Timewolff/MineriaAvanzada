@@ -25,6 +25,7 @@ import umap.umap_ as umap
 import time
 import json
 import os
+from datetime import datetime
 
 # Data Optimization
 from sklearn_genetic import GASearchCV
@@ -74,6 +75,11 @@ from prophet import Prophet
 from sklearn.pipeline import make_pipeline
 from sklearn.model_selection import train_test_split
 from sklearn.preprocessing import StandardScaler
+
+from sklearn.neighbors import KNeighborsRegressor
+from sklearn.metrics import calinski_harabasz_score
+from sklearn.metrics import davies_bouldin_score
+from umap.umap_ import UMAP
 
 #--------------------------------------------------------------
 # EDA
@@ -1121,3 +1127,21 @@ class Supervisado:
                 data.append(fila)
 
         return pd.DataFrame(data)
+        
+class FakeTimeGenerator:
+    def __init__(self, start='2019-01-01', end='2023-12-31', column_name='fecha'):
+        self.start = pd.to_datetime(start)
+        self.end = pd.to_datetime(end)
+        self.column_name = column_name
+
+    def add_fake_dates(self, df, sort_dates=False, seed=42):
+        np.random.seed(seed)
+        n_rows = len(df)
+        random_dates = pd.to_datetime(
+            np.random.randint(self.start.value // 10**9, self.end.value // 10**9, n_rows),
+            unit='s'
+        )
+        df[self.column_name] = random_dates
+        if sort_dates:
+            df = df.sort_values(by=self.column_name).reset_index(drop=True)
+        return df
