@@ -304,25 +304,41 @@ def show_supervised():
         else:
             st.warning("Please select a valid option from the dropdown.")
 
+from prophet import Prophet
+
 def show_forecast():
     st.header("Forecast Results")
 
     df = st.session_state.get("forecast_df")
-    date_col = st.session_state.get("date_col")
-    value_col = st.session_state.get("value_col")
+
+    # Confirm and assign correct datetime and value columns
+    date_col = "fecha"  #This is the column created with FakeTimeGenerator
+    numeric_cols = df.select_dtypes(include=[np.number]).columns.tolist()
+    value_col = st.selectbox("Select the value to forecast", numeric_cols)
 
     if df is None or date_col is None or value_col is None:
         st.error("Missing forecast data.")
         return
-
-    model_type = st.selectbox("Choose time series model", ["prophet", "xgboost"])
+    # Create a new column for the forecasted values
     steps = st.slider("Number of days to forecast", 1, 30, 7)
 
     if st.button("Run Forecast"):
-        pass
-        '''ts_model = TimeSeriesModel(df, date_col, value_col, model_type)
-        ts_model.train()
-        forecast = ts_model.forecast(steps)
+        try:
+            df_prophet = df[[date_col, value_col]].copy()
+            df_prophet.columns = ['ds', 'y']
 
-        st.line_chart(forecast)
-        st.success("Forecast completed.")'''
+            df_prophet['ds'] = pd.to_datetime(df_prophet['ds']) 
+
+            # Fit and predict
+            m = Prophet()
+            m.fit(df_prophet)
+            future = m.make_future_dataframe(periods=steps)
+            forecast = m.predict(future)
+
+            # Plot
+            fig = m.plot(forecast)
+            st.pyplot(fig)
+            st.success("Forecast completed.")
+            st.write("Forecast Data", forecast[['ds', 'yhat', 'yhat_lower', 'yhat_upper']].tail(steps))
+        except Exception as e:
+            st.error(f"Forecasting failed: {e}")
