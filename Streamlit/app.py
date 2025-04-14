@@ -34,7 +34,7 @@ elif selected == "EDA":
 elif selected == "Results":
     if st.session_state.get("problem_type") == "forecast":
         results.show_forecast()
-    else:
+    elif st.session_state.get("problem_type") == "classification" or "regression":
         results.show_supervised()
     #unsupervised_results = unsupervised_model.get_results()
     #results.show_unsupervised(unsupervised_results)

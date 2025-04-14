@@ -190,7 +190,7 @@ class DataOptimization(EDA):
             'DecisionTreeRegressor': DecisionTreeRegressor(),
             'RandomForestRegressor': RandomForestRegressor(),
             'GradientBoostingRegressor': GradientBoostingRegressor(),
-            'XGBRegressor': XGBRegressor(random_state=42)
+            'XGBRegressor': XGBRegressor(n_estimators=100, learning_rate=0.1, max_depth=3, subsample=1.0, random_state=42)
         }
 
         # Classification models
@@ -1115,7 +1115,10 @@ class Supervisado:
         Returns:
             Dataframe with metrics for each model.
         """
-        metricas = ['accuracy', 'precision', 'recall', 'f1_score', 'roc_auc', 'RMSE']
+        if self.problem_type == 'regression':
+            metricas = ['RMSE', 'MSE', 'R2', 'MAE', 'precision_global']
+        else:
+            metricas = ['accuracy', 'precision', 'recall', 'f1_score', 'roc_auc']
         data = []
 
         for resultado in self.all_model_results:

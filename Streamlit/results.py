@@ -37,10 +37,10 @@ def build_dataframe(resultados, problem_type):
 
 def show_supervised():
     # Load session data
-    resultados = st.session_state['resultados']
+    results = st.session_state['resultados']
     problem_type = st.session_state['problem_type']
 
-    df_chart, metric = build_dataframe(resultados, problem_type)
+    df_chart, metric = build_dataframe(results, problem_type)
     chart_metric = "RMSE" if metric == 'RMSE' else "AUC"
 
     # Reshape data for Altair
@@ -89,22 +89,41 @@ def show_supervised():
     )
     st.altair_chart(chart, use_container_width=True)
 
-    # Data for grid of best metrics
+    # Extract the best model name and metric value
+
     if metric == 'roc_auc':
+        chart_metric = 'AUC'
+        #Find the best model based on AUC
+        # Use df.chart obtained from build_dataframe
         best_model_tuple = df_chart.stack().idxmax()
         best_model_name = best_model_tuple[0]
-        best_auc_value = round(df_chart.loc[best_model_tuple[0], best_model_tuple[1]], 3)
+        best_metric_value = round(df_chart.loc[best_model_name, best_model_tuple[1]], 3)
+        # Filter results into only those obtained by exhaustive search
         best_optimization = best_model_tuple[1]
+        good_name_model = f"{best_model_name} ({best_optimization})"
 
-    #New variable to find other metrics
-    good_name_model = f"{best_model_name} ({best_optimization})"
+        best_finder_metrics = next((r for r in results if r.get("modelo") == good_name_model), None)
+    
+    elif metric == 'RMSE':
+        chart_metric = "RMSE"
 
-    # Find the best model metrics to show in the grid
-    best_finder_metrics = next((r for r in resultados if r.get("modelo") == good_name_model), None)
-    if best_finder_metrics:
-        accuracy = round(best_finder_metrics.get("accuracy", 0), 3)
-        precision = round(best_finder_metrics.get("precision", 0), 3)
-        f1_score = round(best_finder_metrics.get("f1_score", 0), 3)
+        # Create a new dataframe for RMSE
+        regression_metrics = ['RMSE', 'MSE', 'R2', 'MAE']
+        regression_data = []
+        for r in results:
+            if 'Exhaustive' in r['modelo']:
+                row = {'Modelo': r['modelo']}
+                for m in regression_metrics:
+                    row[m] = r.get(m)
+                regression_data.append(row)
+        df_regression = pd.DataFrame(regression_data)
+
+        best_row = df_regression.loc[df_regression['RMSE'].idxmin()]
+        best_model_name = best_row['Modelo'].split(' (')[0]
+        best_optimization = 'Exhaustive'
+        good_name_model = best_row['Modelo']
+        best_metric_value = best_row['RMSE']
+        best_finder_metrics = next((r for r in results if r.get("modelo") == good_name_model), None)
 
     # First column level
     col1, col2 = st.columns(2)
@@ -113,11 +132,23 @@ def show_supervised():
         a, b = st.columns(2)
         c, d = st.columns(2)
 
-        a.metric("AUC", best_auc_value, border=True)
-        b.metric("Accuracy", accuracy, border=True)
-        c.metric("Precision", precision, border=True)
-        d.metric("F1 Score", f1_score, border=True)
-        st.caption("*The best algorithm was selected using AUC")
+        if chart_metric == "AUC" and best_finder_metrics:
+            a.metric("AUC", best_metric_value, border=True)
+            b.metric("Accuracy", round(best_finder_metrics.get("accuracy", 0), 3), border=True)
+            c.metric("Precision", round(best_finder_metrics.get("precision", 0), 3), border=True)
+            d.metric("F1 Score", round(best_finder_metrics.get("f1_score", 0), 3), border=True)
+            st.caption("*The best algorithm was selected using AUC")
+
+        elif chart_metric == "RMSE" and best_finder_metrics:
+            a.metric("RMSE", round(best_metric_value, 3), border=True)
+            b.metric("MSE", round(best_finder_metrics.get("MSE", 0), 3), border=True)
+            c.metric("R2", round(best_finder_metrics.get("R2", 0), 3), border=True)
+            d.metric("MAE", round(best_finder_metrics.get("MAE", 0), 3), border=True)
+            st.caption("*The best algorithm was selected using RMSE")
+
+        elif not best_finder_metrics:
+            st.warning("No best model metrics found.")
+            
     with col2:
         st.subheader("Peformance Metrics by Model")
 
@@ -128,7 +159,7 @@ def show_supervised():
             styled_df = df_exhaustivo.style.apply(
                 lambda s: ['background-color: #c2c7d8' if v == s.max() else '' for v in s],
                 axis=0,
-                subset=df_exhaustivo.columns[1:]  # omitir 'Modelo'
+                subset=df_exhaustivo.columns[1:]
             )
             st.dataframe(styled_df, use_container_width=True)
         else:
@@ -138,7 +169,7 @@ def show_supervised():
     # Predictions vs Real and processing time
 
     # Dataframe for predictions vs real
-    best_model = next((r for r in resultados if r['modelo'] == good_name_model), None)
+    best_model = next((r for r in results if r['modelo'] == good_name_model), None)
 
     # Second column level
     col1, col2 = st.columns(2)
