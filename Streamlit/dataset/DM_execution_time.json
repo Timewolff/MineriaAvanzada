@@ -1,9 +1,9 @@
 {
-    "Total": 3.360480785369873,
-    "Regresi\u00f3n Lineal Simple": 0.02205944061279297,
-    "Regresi\u00f3n Ridge": 0.016896963119506836,
-    "Decision Tree Regressor": 0.04828763008117676,
-    "Random Forest Regressor": 1.0120935440063477,
-    "Gradient Boosting Regressor": 1.9687542915344238,
-    "XGBoost Regressor": 0.28569674491882324
+    "Total": 3.254580020904541,
+    "Regresi\u00f3n Lineal Simple": 0.02221083641052246,
+    "Regresi\u00f3n Ridge": 0.0190427303314209,
+    "Decision Tree Regressor": 0.0467982292175293,
+    "Random Forest Regressor": 0.8788266181945801,
+    "Gradient Boosting Regressor": 1.9616050720214844,
+    "XGBoost Regressor": 0.3180077075958252
 }

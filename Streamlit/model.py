@@ -1104,7 +1104,6 @@ class Supervisado:
         except Exception as e:
             print(f"\nError exporting execution times: {e}")
 
-
         return self.all_model_results
     
 
