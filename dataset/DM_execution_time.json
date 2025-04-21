@@ -1,9 +1,0 @@
-{
-    "Total": 4.4995810985565186,
-    "Regresi\u00f3n Lineal Simple": 0.018018722534179688,
-    "Regresi\u00f3n Ridge": 0.014299392700195312,
-    "Decision Tree Regressor": 0.038031578063964844,
-    "Random Forest Regressor": 1.886343240737915,
-    "Gradient Boosting Regressor": 2.269395589828491,
-    "XGBoost Regressor": 0.2612948417663574
-}

@@ -6,7 +6,7 @@ import pandas as pd
 # Import other modules
 import about
 import start
-from eda import EDAApp
+import eda
 import results as results
 
 main_color = "#384B70"
@@ -30,7 +30,7 @@ with st.sidebar:
 if selected == "Start Analysis":
     start.show()
 elif selected == "EDA":
-    EDAApp.show()
+    eda.show()
 elif selected == "Results":
     if st.session_state.get("problem_type") == "forecast":
         results.show_forecast()

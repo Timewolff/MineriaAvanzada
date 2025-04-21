@@ -28,6 +28,10 @@ def show_supervised():
        depending on the problem type
     5. Shows time exacution on the optimization and algorithm execution
     """
+    # Check if resultados session state exists
+    if 'resultados' not in st.session_state:
+        st.warning("No data available. You need to run the model first in Start Analysis option.")
+        return
 
     # Load stored results and problem type
     results = st.session_state['resultados']
@@ -151,25 +155,35 @@ def show_supervised():
             b.metric("Accuracy", round(best_data.get("accuracy", 0), 3), border=True)
             c.metric("Precision", round(best_data.get("precision", 0), 3), border=True)
             d.metric("F1 Score", round(best_data.get("f1_score", 0), 3), border=True)
-            st.caption("*The best algorithm was selected using AUC")
+            st.caption("Leading model by AUC metric")
         elif chart_metric == 'RMSE' and best_data:
             a.metric("RMSE", round(best_val, 3), border=True)
             b.metric("MSE", round(best_data.get("MSE", 0), 3), border=True)
             c.metric("R2", round(best_data.get("R2", 0), 3), border=True)
             d.metric("MAE", round(best_data.get("MAE", 0), 3), border=True)
-            st.caption("*The best algorithm was selected using RMSE")
+            st.caption("Leading model by RMSE metric")
         else:
             st.warning("No best model metrics found.")
 
     with col2:
-        st.subheader("Performance Metrics by Model")
-        modelo = st.session_state['modelo_supervisado']
-        df_ex = modelo.get_exhaustive_metrics()
+        # Extracts the metrics of models based on exhaustive optimization
+        df_ex = st.session_state['modelo_supervisado'].get_exhaustive_metrics()
         if not df_ex.empty:
-            styled = df_ex.style.apply(
-                lambda s: ['background-color: #c2c7d8' if v == s.max() else '' for v in s],
-                axis=0, subset=df_ex.columns[1:]
+            # Metrics to highlight
+            lower_better_all = ['RMSE', 'MSE', 'MAE']
+            higher_better_all = ['R2', 'precision_global', 'accuracy', 'precision', 'recall', 'f1_score', 'roc_auc']
+
+            lower_better = [col for col in lower_better_all if col in df_ex.columns]
+            higher_better = [col for col in higher_better_all if col in df_ex.columns]
+
+            styled = (
+                df_ex.style
+                    .highlight_min(subset=lower_better, color='#c2c7d8') if lower_better else df_ex.style
             )
+            styled = (
+                styled.highlight_max(subset=higher_better, color='#c2c7d8') if higher_better else styled
+            )
+
             st.dataframe(styled, use_container_width=True)
         else:
             st.warning("No exhaustive results available.")
@@ -223,10 +237,10 @@ def show_supervised():
     with col2:
         st.subheader("Optimization Execution Time")
         # Data Optimization timings
-        with open(os.path.join('dataset', 'DO_execution_time.json')) as f:
+        with open(os.path.join('runtime_json_files', 'DO_execution_time.json')) as f:
             opt_times = json.load(f)
         # Model execution timings
-        with open(os.path.join('dataset', 'DM_execution_time.json')) as f:
+        with open(os.path.join('runtime_json_files', 'DM_execution_time.json')) as f:
             model_times = json.load(f)
 
         select = st.selectbox(

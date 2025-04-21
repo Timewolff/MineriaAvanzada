@@ -81,25 +81,31 @@ from sklearn.metrics import calinski_harabasz_score
 from sklearn.metrics import davies_bouldin_score
 from umap.umap_ import UMAP
 
+# Use streamlit components
+import streamlit as st
+
 #--------------------------------------------------------------
 # EDA
 #--------------------------------------------------------------
 
 class EDA:
-    def __init__(self, file=None):
+    def __init__(self, file=None, delimiter=None):
         """
-        Inicializa la clase EDA y carga datos desde un archivo CSV si se proporciona.
+        Starts the EDA class and loads data from a CSV file if provided.
 
-        Parámetros:
-            file (str): Ruta al archivo CSV. Si no se proporciona, se inicializa un DataFrame vacío.
+         Parameters:
+            file (str): Path to the CSV file. If not provided, an empty DataFrame is initialized.
         """
-        self.__df = pd.read_csv(file) if file else pd.DataFrame()
+        if delimiter:
+            self.__df = pd.read_csv(file, delimiter=delimiter)
+        else:
+            self.__df = pd.read_csv(file) if file else pd.DataFrame()
 
     def head_df(self, n=5):
-        return self.__df.head(n) if not self.__df.empty else "No se cargaron los datos :("
+        return self.__df.head(n) if not self.__df.empty else "No data loaded :("
 
     def tail_df(self, n=5):
-        return self.__df.tail(n) if not self.__df.empty else "No se cargaron los datos :("
+        return self.__df.tail(n) if not self.__df.empty else "No data loaded :("
 
     def check_data_types(self):
         return self.__df.dtypes
@@ -113,7 +119,7 @@ class EDA:
     def detect_outliers(self):
         num_df = self.__df.select_dtypes(include=['float64', 'int64'])
         if num_df.empty:
-            return "No hay columnas numéricas en el DataFrame."
+            return "There are no numeric columns in the DataFrame."
 
         Q1 = num_df.quantile(0.25)
         Q3 = num_df.quantile(0.75)
@@ -121,7 +127,7 @@ class EDA:
         outliers = ((num_df < (Q1 - 1.5 * IQR)) | (num_df > (Q3 + 1.5 * IQR))).sum()
         Dicc_outliers = {col: outliers[col] for col in num_df.columns if outliers[col] > 0}
 
-        return Dicc_outliers if Dicc_outliers else "No se detectaron valores atípicos en las columnas numéricas."
+        return Dicc_outliers if Dicc_outliers else "No outliers were detected in the numerical columns."
 
     def plot_scatter(self, col1, col2):
         plt.figure(figsize=(10, 6))
@@ -130,29 +136,28 @@ class EDA:
         plt.xlabel(col1)
         plt.ylabel(col2)
         plt.grid()
-        plt.show()
+        st.pyplot(plt)
 
     def plot_histogram(self, col):
         plt.figure(figsize=(10, 6))
         sns.histplot(self.__df[col], kde=True)
-        plt.title(f'Histograma de {col}')
+        plt.title(f'Histogram: {col}')
         plt.xlabel(col)
-        plt.ylabel('Frecuencia')
-        plt.show()
+        plt.ylabel('Frequency')
+        st.pyplot(plt)
 
     def plot_heatmap(self):
         num_df = self.__df.select_dtypes(include=['float64', 'int64'])
         if num_df.empty:
-            return "No hay columnas numéricas para generar el mapa de calor."
+            return "There are no numeric columns in the DataFrame."
 
         num_df = num_df.loc[:, num_df.apply(lambda x: np.std(x) > 0.01)]
 
         plt.figure(figsize=(12, 10))
-        sns.heatmap(num_df.corr(), cmap="coolwarm", annot= True, linewidths=0.5, cbar=True) #annot=False es para que no se vean los numeros en los cuadros
+        sns.heatmap(num_df.corr(), cmap="crest", annot=True, linewidths=0.5, cbar=True)
         plt.xticks(rotation=45, ha='right')
         plt.yticks(rotation=0)
-        plt.title("Correlation heatmap", fontsize=18)
-        plt.ion()
+        st.pyplot(plt)
 
     def __str__(self):
         return f"Clase EDA - DataFrame de la forma: {self.__df.shape}"
@@ -576,7 +581,7 @@ class DataOptimization(EDA):
 
         # Export the execution times to a JSON file
         try:
-            file_path = os.path.join('dataset', 'DO_execution_time.json')
+            file_path = os.path.join('runtime_json_files', 'DO_execution_time.json')
             with open(file_path, 'w') as f:
                 json.dump(self.execution_times, f, indent=4)
             print(f"Timing exported in {file_path}")
@@ -1097,7 +1102,7 @@ class Supervisado:
         
         # Export the execution times to a JSON file
         try:
-            file_path = os.path.join('dataset', 'DM_execution_time.json')
+            file_path = os.path.join('runtime_json_files', 'DM_execution_time.json')
             with open(file_path, 'w') as f:
                 json.dump(self.execution_times, f, indent=4)
             print(f"Execution times exported to {file_path}")
