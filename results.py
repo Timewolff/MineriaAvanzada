@@ -166,6 +166,7 @@ def show_supervised():
             st.warning("No best model metrics found.")
 
     with col2:
+        st.subheader("Model Evaluation Scorecard")
         # Extracts the metrics of models based on exhaustive optimization
         df_ex = st.session_state['modelo_supervisado'].get_exhaustive_metrics()
         if not df_ex.empty:

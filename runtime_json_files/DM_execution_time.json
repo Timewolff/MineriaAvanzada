@@ -1,7 +1,9 @@
 {
-    "Total": 1.0227923393249512,
-    "DecisionTreeClassifier": 0.02423262596130371,
-    "KNeighborsClassifier": 0.03288745880126953,
-    "RandomForestClassifier": 0.3878321647644043,
-    "AdaBoostClassifier": 0.5760204792022705
+    "Total": 3.918928623199463,
+    "Regresi\u00f3n Lineal Simple": 0.017314672470092773,
+    "Regresi\u00f3n Ridge": 0.01351475715637207,
+    "Decision Tree Regressor": 0.04211592674255371,
+    "Random Forest Regressor": 1.0255112648010254,
+    "Gradient Boosting Regressor": 2.4330484867095947,
+    "XGBoost Regressor": 0.37931036949157715
 }
