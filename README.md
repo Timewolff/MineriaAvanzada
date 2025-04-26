@@ -46,18 +46,31 @@ Simple UI: A user-friendly interface powered by Streamlit.
 ---
 ## **Project Structure**
 ```
-📂 ModelBoard/              # Main project folder
-│── 📂 modules/             # Core application modules
-│   ├── eda.py             # Exploratory Data Analysis module
-│   ├── results.py         # Model Evaluation and visualization
-│   ├── about.py           # Project Information and Contributors
-│── 📂 data/               # Dataset storage
-│   ├── sample_data.csv    # Example dataset
-│── 📂 config/             # Configuration settings
-│   ├── config.json        # Model parameters and settings
-│── 📄 app.py              # Main Streamlit application
-│── 📄 requirements.txt    # Dependencies
-│── 📄 README.md           # Documentation
+📂 MineriaApp/                     # Main project folder
+│
+├── 📂 dataset/                   # CSV datasets tested in the project
+│   ├── dataset.csv
+│   ├── diabetes_V2.csv
+│   ├── expenses.csv
+│   └── potabilidad_V2.csv
+│
+├── 📂 notebooks/                 # Jupyter Notebooks (experimentation)
+│
+├── 📂 runtime_json_files/        # JSON files for tracking runtime execution
+│   ├── DM_execution_time.json
+│   └── DO_execution_time.json
+│
+├── 📂 .streamlit/                # Streamlit configuration folder
+│
+├── 📄 .gitignore                 # Git ignored files and folders
+├── 📄 about.py                   # Project details
+├── 📄 app.py                     # Main Streamlit application entry point
+├── 📄 eda.py                     # Exploratory Data Analysis module
+├── 📄 model.py                   # Model training and evaluation
+├── 📄 requirements.txt           # Project dependencies
+├── 📄 results.py                 # Model results and visualizations
+├── 📄 start.py                   # Initial Analysis module
+└── 📄 README.md                  # Project documentation
 ```
 
 ## **Technologies Used**
@@ -68,14 +81,6 @@ Pandas & NumPy for data manipulation
 Seaborn & Matplotlib for visualization
 Altair for interactive charts
 Streamlit-AntD-Components for enhanced UI
-
----
-## **Future Enhancements**
-
-✅ More model evaluation techniques.
-✅ Additional interactive visualizations.
-✅ Improved UI and usability.
-✅ Integration of advanced ML algorithms.
 
 ---
 ## **Contributors**
