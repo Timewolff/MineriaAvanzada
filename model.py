@@ -3,11 +3,9 @@
 # Python Project
 # 
 # **Contributors**
-# - Carolina Salas Moreno
 # - Deykel Bernard Salazar
 # - Esteban Ramirez Montano
 # - Kristhel Porras Mata
-# - Marla Gomez Hernández
 
 #--------------------------------------------------------------
 # Importing Libraries
@@ -427,7 +425,7 @@ class DataOptimization(EDA):
             print(f"Training {name} with genetic method...")
             evolved_estimator = GASearchCV(
                 estimator=pl,
-                cv=5,
+                cv=10,
                 scoring=scoring_metric,
                 population_size=10,
                 generations=5,
@@ -446,6 +444,7 @@ class DataOptimization(EDA):
                 'best_params': evolved_estimator.best_params_,
                 'estimator': evolved_estimator.best_estimator_
             }
+        print(f"[Genetic] CV folds usados: {evolved_estimator.cv}")
         return results
 
     def exhaustive_search(self, scoring_metric):
@@ -475,7 +474,7 @@ class DataOptimization(EDA):
             grid_search = GridSearchCV(
                 estimator=pl,
                 param_grid=self.param_grids_exhaustive[name],
-                cv=5,
+                cv=10,
                 scoring=scoring_metric,
                 n_jobs=-1,
                 verbose=1
@@ -485,6 +484,7 @@ class DataOptimization(EDA):
                 'best_params': grid_search.best_params_,
                 'estimator': grid_search.best_estimator_
             }
+        print(f"[Exhaustive] CV folds usados: {grid_search.cv}")
         return results
 
 #------------------------Director Function--------------------------------------------------------------
